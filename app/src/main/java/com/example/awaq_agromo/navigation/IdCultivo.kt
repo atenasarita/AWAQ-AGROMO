@@ -5,9 +5,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 
 @Composable
-fun IdCultivoScreen() {
+fun IdCultivoScreen(navController: NavHostController) {
     var tipoCultivo by remember { mutableStateOf("") }
     var fechaSiembra by remember { mutableStateOf("") }
     var variedad by remember { mutableStateOf("") }
@@ -60,7 +61,7 @@ fun IdCultivoScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { /* Aquí irá la acción futura */ },
+            onClick = { navController.navigate("clima") },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Siguiente")

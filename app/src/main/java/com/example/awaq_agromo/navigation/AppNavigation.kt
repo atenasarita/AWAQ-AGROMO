@@ -11,6 +11,7 @@ import com.example.awaq_agromo.navigation.LoginScreen
 fun AppNavigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "login") {
         composable("login") { LoginScreen(onLogin = { navController.navigate("cultivo") }) }
-        composable("cultivo") { IdCultivoScreen() }
+        composable("cultivo") { IdCultivoScreen(navController) }
+        composable("clima") { ClimaScreen(navController) }
     }
 }
