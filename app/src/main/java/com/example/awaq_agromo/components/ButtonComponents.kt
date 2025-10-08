@@ -1,4 +1,4 @@
-package com.example.agromo_ai.ui.components
+package com.example.awaq_agromo.components
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,15 +12,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.awaq_agromo.ui.theme.Neutral400
+import com.example.awaq_agromo.ui.theme.Primary900
+import com.example.awaq_agromo.ui.theme.PrincipalNeutral
 
 @Composable
 fun PrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    backgroundColor: Color = Color(0xFF4CAF50),
-    textColor: Color = Color.White
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
@@ -28,8 +29,8 @@ fun PrimaryButton(
             .fillMaxWidth()
             .height(56.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = backgroundColor,
-            contentColor = textColor
+            containerColor = Primary900,
+            contentColor = Color.White
         ),
         shape = androidx.compose.material3.MaterialTheme.shapes.medium,
         enabled = enabled

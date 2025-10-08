@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.agromo_ai.ui.components.PrimaryButton
 import com.example.awaq_agromo.R
+import com.example.awaq_agromo.components.PrimaryButton
 import com.example.awaq_agromo.components.SubtitleText
 import com.example.awaq_agromo.components.TitleText
 
@@ -68,7 +68,6 @@ fun Onboarding_Page_1Screen(){
 
         PrimaryButton(
             text = "Quiero registrarme",
-            backgroundColor = Color(0xFF5E6C00),
             onClick = {}
         )
     }

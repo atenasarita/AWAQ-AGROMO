@@ -23,9 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.agromo_ai.ui.components.PrimaryButton
-import com.example.agromo_ai.ui.components.SecondaryButton
+import com.example.awaq_agromo.components.PrimaryButton
 import com.example.awaq_agromo.components.ProgressBar
+import com.example.awaq_agromo.components.SecondaryButton
 import com.example.awaq_agromo.components.SubtitleText
 import com.example.awaq_agromo.components.TitleText
 
@@ -85,7 +85,6 @@ fun Onboarding_Page_2Screen(){
 
         PrimaryButton(
             text = "Activar",
-            backgroundColor = Color(0xFF5E6C00),
             onClick = {}
         )
 
