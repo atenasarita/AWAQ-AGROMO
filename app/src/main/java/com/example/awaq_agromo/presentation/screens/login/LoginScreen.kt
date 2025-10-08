@@ -1,54 +1,83 @@
 package com.example.awaq_agromo.presentation.screens.login
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.awaq_agromo.components.AgromoHeader
+import com.example.awaq_agromo.components.AgromoPasswordField
+import com.example.awaq_agromo.components.AgromoPrimaryButton
+import com.example.awaq_agromo.components.AgromoSecondaryButton
+import com.example.awaq_agromo.components.AgromoTextField
+import com.example.awaq_agromo.ui.theme.Primary50
+import com.example.awaq_agromo.ui.theme.AgromoTheme
 
 @Composable
 fun LoginScreen(onLogin: () -> Unit) {
-    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = "Login", style = MaterialTheme.typography.headlineMedium)
+    val isFormValid =
+        email.isNotBlank() &&
+                password.isNotBlank()
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Usuario") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Contraseña") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = onLogin,
-            modifier = Modifier.fillMaxWidth()
+    AgromoTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Primary50)
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Ingresar")
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 24.dp, vertical = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                AgromoHeader(modifier = Modifier.padding(bottom = 24.dp))
+
+                AgromoTextField(
+                    label = "Correo Electrónico",
+                    value = email,
+                    onValueChange = { email = it },
+                    keyboardType = KeyboardType.Email,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                AgromoPasswordField(
+                    label = "Contraseña",
+                    value = password,
+                    onValueChange = { password = it },
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                if (isFormValid) {
+                    AgromoPrimaryButton(
+                        text = "REGISTRARME",
+                        onClick = {
+                            println("Registrando usuario...")
+                        }
+                    )
+                } else {
+                    AgromoSecondaryButton(
+                        text = "REGISTRARME",
+                        onClick = {  }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text("¿Ya tienes una cuenta? Iniciar sesión", modifier = Modifier.padding(vertical = 8.dp))
+            }
+
         }
     }
 }
