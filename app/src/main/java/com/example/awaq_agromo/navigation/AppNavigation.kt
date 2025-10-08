@@ -7,6 +7,8 @@ import androidx.navigation.compose.composable
 import com.example.awaq_agromo.presentation.screens.camera.PhotoScreen
 import com.example.awaq_agromo.presentation.screens.login.LoginScreen
 import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_1Screen
+import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_2Screen
+import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_3Screen
 import com.example.awaq_agromo.presentation.screens.perfil.PerfilScreen
 import com.example.awaq_agromo.presentation.screens.registration.RegistrationScreen
 import com.example.awaq_agromo.presentation.screens.welcome.WelcomeScreen
@@ -26,13 +28,35 @@ fun AppNavigation(navController: NavHostController) {
             )
         }
         composable("login") {
-            LoginScreen(onLogin = { navController.navigate("cultivo") })
+            LoginScreen(onDashboardClick = { navController.navigate("dashboard") })
         }
         composable("registration") {
-            RegistrationScreen()
+            RegistrationScreen(
+                onOnboardingClick = { navController.navigate("Onboarding_1") }
+            )
         }
-        composable("Onboarding") {
-            Onboarding_Page_1Screen()
+        composable("Onboarding_1") {
+            Onboarding_Page_1Screen(
+                onNextOnboardingPage2 = {navController.navigate("Onboarding_2")}
+            )
+        }
+        composable("Onboarding_2") {
+            Onboarding_Page_2Screen(
+                onNextOnboardingPage3 = {navController.navigate("Onboarding_3")}
+            )
+        }
+        composable("Onboarding_3") {
+            Onboarding_Page_3Screen(
+                onDashboardClick = {navController.navigate("dashboard")}
+            )
+        }
+        composable("dashboard") {
+            /*Dashboard(
+                onPerfilClick = {navController.navigate("perfil")}
+            )*/
+        }
+        composable("perfil") {
+            PerfilScreen()
         }
         composable("cultivo") {
             IdCultivoScreen(navController)
@@ -42,9 +66,6 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable("photo") {
             PhotoScreen(navController)
-        }
-        composable("perfil") {
-            PerfilScreen()
         }
     }
 }

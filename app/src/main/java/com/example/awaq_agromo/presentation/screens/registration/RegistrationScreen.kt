@@ -29,7 +29,9 @@ import com.example.awaq_agromo.ui.theme.AgromoTheme
 import com.example.awaq_agromo.ui.theme.Primary50
 
 @Composable
-fun RegistrationScreen() {
+fun RegistrationScreen(
+    onOnboardingClick: () -> Unit = {}
+) {
     // 1. Estados de la pantalla
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -111,16 +113,15 @@ fun RegistrationScreen() {
                 if (isFormValid) {
                     AgromoPrimaryButton(
                         text = "REGISTRARME",
-                        onClick = {
-                            // Lógica de registro aquí
-                            println("Registrando usuario...")
-                        }
+                        onClick = onOnboardingClick
                     )
                 } else {
                     // Muestra el botón sutil cuando el formulario NO es válido (Diseño original)
                     AgromoSecondaryButton(
                         text = "REGISTRARME",
-                        onClick = { /* No hacer nada o mostrar error */ }
+                        onClick = { /* No hacer nada o mostrar error */
+                            println("Registrando usuario...")
+                        }
                     )
                 }
 

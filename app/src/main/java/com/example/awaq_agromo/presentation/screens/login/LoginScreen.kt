@@ -19,7 +19,7 @@ import com.example.awaq_agromo.ui.theme.Primary50
 import com.example.awaq_agromo.ui.theme.AgromoTheme
 
 @Composable
-fun LoginScreen(onLogin: () -> Unit) {
+fun LoginScreen(onDashboardClick: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -62,9 +62,7 @@ fun LoginScreen(onLogin: () -> Unit) {
                 if (isFormValid) {
                     AgromoPrimaryButton(
                         text = "INICIAR SESIÓN",
-                        onClick = {
-                            println("Registrando usuario...")
-                        }
+                        onClick = onDashboardClick
                     )
                 } else {
                     AgromoSecondaryButton(

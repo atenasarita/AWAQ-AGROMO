@@ -22,7 +22,9 @@ import com.example.awaq_agromo.components.TitleText
 
 @Preview(showSystemUi = true)
 @Composable
-fun Onboarding_Page_3Screen(){
+fun Onboarding_Page_3Screen(
+    onDashboardClick: () -> Unit = {}
+){
 
     var progress by remember { mutableFloatStateOf(1f) }
 
@@ -48,7 +50,7 @@ fun Onboarding_Page_3Screen(){
 
         PrimaryButton(
             text = "Completar",
-            onClick = {}
+            onClick = {onDashboardClick}
         )
     }
 }

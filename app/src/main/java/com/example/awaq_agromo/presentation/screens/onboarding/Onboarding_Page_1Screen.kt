@@ -26,7 +26,9 @@ import com.example.awaq_agromo.components.TitleText
 
 @Preview(showSystemUi = true)
 @Composable
-fun Onboarding_Page_1Screen(){
+fun Onboarding_Page_1Screen(
+    onNextOnboardingPage2: () -> Unit = {}
+){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -68,7 +70,7 @@ fun Onboarding_Page_1Screen(){
 
         PrimaryButton(
             text = "Quiero registrarme",
-            onClick = {}
+            onClick = onNextOnboardingPage2
         )
     }
 }

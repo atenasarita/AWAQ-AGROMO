@@ -19,8 +19,8 @@ import com.example.awaq_agromo.ui.theme.PrincipalNeutral
 fun AgromoSecondaryButton(
     text: String,
     onClick: () -> Unit,
-    enabled: Boolean = true,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     OutlinedButton(
         onClick = onClick,

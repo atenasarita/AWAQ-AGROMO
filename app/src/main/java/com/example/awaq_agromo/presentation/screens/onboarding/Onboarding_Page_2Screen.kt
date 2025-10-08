@@ -31,7 +31,9 @@ import com.example.awaq_agromo.components.TitleText
 
 @Preview(showSystemUi = true)
 @Composable
-fun Onboarding_Page_2Screen(){
+fun Onboarding_Page_2Screen(
+    onNextOnboardingPage3: () -> Unit = {}
+){
 
     var progress by remember { mutableFloatStateOf(0.5f) }
 
@@ -92,7 +94,7 @@ fun Onboarding_Page_2Screen(){
 
         SecondaryButton(
             text = "Ahora no",
-            onClick = {},
+            onClick = onNextOnboardingPage3,
             textColor = Color(0xFF344E18)
         )
     }
