@@ -9,9 +9,10 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val DarkColorScheme = darkColorScheme(
+/*private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
     tertiary = Pink80
@@ -53,6 +54,29 @@ fun AWAQAGROMOTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        content = content
+    )
+}*/
+
+private val AgromoColorScheme = lightColorScheme(
+    primary = Color(0xFF4CAF50),
+    secondary = Color(0xFF66BB6A),
+    tertiary = Color(0xFF81C784),
+    background = Color(0xFFEFFFDE),
+    surface = Color(0xFFFFFFFF),
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onBackground = Color.Black,
+    onSurface = Color.Black,
+)
+
+@Composable
+fun AgromoTheme(
+    content: @Composable () -> Unit
+) {
+    MaterialTheme(
+        colorScheme = AgromoColorScheme,
+        typography = androidx.compose.material3.Typography(),
         content = content
     )
 }
