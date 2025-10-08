@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.awaq_agromo.components.AgromoHeader
+import com.example.agromo_ai.ui.components.AgromoLogo
 import com.example.awaq_agromo.components.AgromoPasswordField
 import com.example.awaq_agromo.components.AgromoPrimaryButton
 import com.example.awaq_agromo.components.AgromoSecondaryButton
@@ -42,7 +42,7 @@ fun LoginScreen(onLogin: () -> Unit) {
                     .padding(horizontal = 24.dp, vertical = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AgromoHeader(modifier = Modifier.padding(bottom = 24.dp))
+                AgromoLogo(modifier = Modifier.padding(bottom = 24.dp))
 
                 AgromoTextField(
                     label = "Correo Electrónico",
@@ -61,21 +61,21 @@ fun LoginScreen(onLogin: () -> Unit) {
 
                 if (isFormValid) {
                     AgromoPrimaryButton(
-                        text = "REGISTRARME",
+                        text = "INICIAR SESIÓN",
                         onClick = {
                             println("Registrando usuario...")
                         }
                     )
                 } else {
                     AgromoSecondaryButton(
-                        text = "REGISTRARME",
+                        text = "INICIAR SESIÓN",
                         onClick = {  }
                     )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text("¿Ya tienes una cuenta? Iniciar sesión", modifier = Modifier.padding(vertical = 8.dp))
+                Text("¿No tienes una cuenta? Crear cuenta", modifier = Modifier.padding(vertical = 8.dp))
             }
 
         }

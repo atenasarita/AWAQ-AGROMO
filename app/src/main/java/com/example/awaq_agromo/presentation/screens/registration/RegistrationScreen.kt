@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.awaq_agromo.components.AgromoHeader
+import com.example.agromo_ai.ui.components.AgromoLogo
 import com.example.awaq_agromo.components.AgromoPasswordField
 import com.example.awaq_agromo.components.AgromoPrimaryButton
 import com.example.awaq_agromo.components.AgromoPrivacyCheckbox
@@ -63,7 +63,7 @@ fun RegistrationScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // --- Header ---
-                AgromoHeader(modifier = Modifier.padding(bottom = 24.dp))
+                AgromoLogo(modifier = Modifier.padding(bottom = 24.dp))
 
                 // --- Campos de Formulario ---
                 AgromoTextField(

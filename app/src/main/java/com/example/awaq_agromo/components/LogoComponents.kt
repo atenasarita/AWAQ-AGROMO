@@ -22,11 +22,12 @@ import com.example.awaq_agromo.R
 
 @Composable
 fun AgromoLogo(
+    modifier: Modifier = Modifier
 ) {
     Image(
         painter = painterResource(id = R.drawable.ic_agromo_logo), // Asegúrate de tener este recurso
         contentDescription = "Agromo Logo",
-        modifier = Modifier.size(120.dp)
+        modifier = modifier.size(120.dp)
     )
 }
 

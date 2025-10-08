@@ -8,16 +8,17 @@ import com.example.awaq_agromo.presentation.screens.camera.PhotoScreen
 import com.example.awaq_agromo.presentation.screens.login.LoginScreen
 import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_1Screen
 import com.example.awaq_agromo.presentation.screens.perfil.PerfilScreen
+import com.example.awaq_agromo.presentation.screens.registration.RegistrationScreen
 import com.example.awaq_agromo.presentation.screens.welcome.WelcomeScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "welcom") {
+    NavHost(navController = navController, startDestination = "welcome") {
 
-        composable("welcom") {
+        composable("welcome") {
             WelcomeScreen(
                 onRegisterClick = {
-                    // Navegar a pantalla de registro
+                    navController.navigate("registration")
                 },
                 onLoginClick = {
                     navController.navigate("login")
@@ -26,6 +27,9 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable("login") {
             LoginScreen(onLogin = { navController.navigate("cultivo") })
+        }
+        composable("registration") {
+            RegistrationScreen()
         }
         composable("Onboarding") {
             Onboarding_Page_1Screen()
