@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -17,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.agromo_ai.ui.components.AgromoLogo
+import com.example.awaq_agromo.components.AgromoLogo
 import com.example.awaq_agromo.components.PrimaryButton
 import com.example.awaq_agromo.components.SecondaryButton
 import com.example.awaq_agromo.components.SubtitleText
@@ -36,27 +37,29 @@ fun WelcomeScreen(
             verticalArrangement = Arrangement.Center
         ) {
             // Logo
-            AgromoLogo()
+            AgromoLogo(
+                modifier = Modifier.size(200.dp)
+            )
 
             Spacer(modifier = Modifier.height(40.dp))
 
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(20.dp)
                     .background(
                         Color(0xFF829500),
                         shape = MaterialTheme.shapes.medium)
             ) {
                 SubtitleText(
-                    text = "Monitoree sus cultivos y genere\ninformes integrales",
-                    modifier = Modifier.padding(10.dp),
+                    text = "Monitoree sus cultivos y genere informes integrales",
+                    modifier = Modifier.padding(20.dp),
                     color = Color.White
 
                 )
             }
 
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(120.dp))
 
             // Botones
             PrimaryButton(

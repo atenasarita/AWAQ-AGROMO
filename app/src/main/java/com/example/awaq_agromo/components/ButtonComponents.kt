@@ -12,9 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.awaq_agromo.ui.theme.Neutral400
 import com.example.awaq_agromo.ui.theme.Primary900
-import com.example.awaq_agromo.ui.theme.PrincipalNeutral
 
 @Composable
 fun PrimaryButton(

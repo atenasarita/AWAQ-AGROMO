@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.agromo_ai.ui.components.AgromoLogo
+import com.example.awaq_agromo.components.AgromoLogo
 import com.example.awaq_agromo.components.AgromoPasswordField
 import com.example.awaq_agromo.components.AgromoPrimaryButton
 import com.example.awaq_agromo.components.AgromoSecondaryButton

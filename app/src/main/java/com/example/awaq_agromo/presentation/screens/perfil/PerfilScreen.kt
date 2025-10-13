@@ -1,9 +1,12 @@
 package com.example.awaq_agromo.presentation.screens.perfil
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,15 +15,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,177 +41,126 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.awaq_agromo.R
+import com.example.awaq_agromo.components.TitleText
+import com.example.awaq_agromo.components.profileComponents.InfoCard
+import com.example.awaq_agromo.components.profileComponents.UserCard
+import com.example.awaq_agromo.data.informes.InformeData
+
+private val sampleInformes: List<InformeData> = listOf(
+    InformeData("12 sept", "Informe integral", "Atender", Color.Red, R.drawable.image_ph),
+    InformeData("15 sept", "Revisión hortalizas", "En curso", Color.Blue, R.drawable.image_ph),
+    InformeData("20 sept", "Detección de plaga", "Urgente", Color.Red, R.drawable.planta_de_pimientos),
+    InformeData("25 sept", "Abono orgánico", "Pendiente", Color.Gray, R.drawable.image_ph),
+    InformeData("28 sept", "Ajuste de riego", "Completado", Color.Green, R.drawable.planta_de_pimientos),
+    InformeData("01 oct", "Mantenimiento", "En curso", Color.Blue, R.drawable.planta_de_pimientos),
+    InformeData("05 oct", "Fertilización", "Pendiente", Color.Gray, R.drawable.image_ph),
+)
 
 @Preview(showSystemUi = true)
 @Composable
-fun PerfilScreen() {
+fun PerfilScreen(
+    onDashboardClick: () -> Unit = {},
+    onMonitoringClick: () -> Unit = {},
+    onInformePlantaClick: () -> Unit = {},
+    onCommunityClick: () -> Unit = {} // Desavilitado, para implemetacion futura
+) {
+    val colorBorde = Color(0xFF344E18)
+    val colorTexto = colorBorde
+    val colorIconos = colorBorde
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .padding(horizontal = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
-        // Header con información del usuario
-        UserHeader()
-
-        // Lista de informes
-        ReportsList()
-
-        // Navigation Bottom Bar
-        BottomNavigationBar()
-    }
-}
-
-@Composable
-fun UserHeader() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Avatar/Icono del usuario
-        Box(
-            modifier = Modifier
-                .size(80.dp)
-                .background(
-                    color = Color(0xFF829500),
-                    shape = CircleShape
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "MP",
-                color = Color.White,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Nombre del usuario
-        Text(
-            text = "María Pardo",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Ubicación
+        Spacer(modifier = Modifier.height(50.dp))
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = Icons.Default.LocationOn,
-                contentDescription = "Ubicación",
-                tint = Color.Gray,
-                modifier = Modifier.size(16.dp)
+            IconButton(
+                onClick = {} // No se que se deberia de poder hacerse...
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = "Perfil",
+                    tint = colorIconos,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
+            TitleText(
+                text = ("Perfil"),
+                color = Color.Black,
+                fontSize = 20.sp
             )
 
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
-            Text(
-                text = "Cuenca, Ecuador",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray
+            IconButton(
+                onClick = {}
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Settings",
+                    tint = colorIconos,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
+        }
+        Spacer(modifier = Modifier.height(15.dp))
+        HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
+        Spacer(modifier = Modifier.height(30.dp))
+
+        UserCard(
+            textColor = colorTexto,
+            borderColor = colorBorde,
+            nombreUsuario = "Nombre de Usuario",
+            ubicacion = "Lugar del Usuario",
+            imagenUsuario = R.drawable.chiili
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            TitleText(
+                text = ("Mis informes"),
+                color = Color.Black,
+                fontSize = 30.sp
             )
         }
-    }
-}
 
-@Composable
-fun ReportsList() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp)
-    ) {
-        // Título de la sección
-        Text(
-            text = "Mis informes",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        Spacer(modifier = Modifier.height(15.dp))
 
-        // Primer informe - Completo
-        ReportItem(
-            date = "12 sept",
-            title = "Informe integral",
-            status = "Completo",
-            statusColor = Color(0xFF4CAF50) // Verde
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Segundo informe - Atender
-        ReportItem(
-            date = "23 sept",
-            title = "pH del suelo",
-            status = "Atender",
-            statusColor = Color(0xFFFF9800) // Naranja
-        )
-
-        // Línea divisoria
-        HorizontalDivider(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 24.dp),
-            thickness = 1.dp,
-            color = Color.LightGray.copy(alpha = 0.4f)
-        )
-    }
-}
+                .weight(1f),
 
-@Composable
-fun ReportItem(
-    date: String,
-    title: String,
-    status: String,
-    statusColor: Color
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column {
-            // Fecha
-            Text(
-                text = date,
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // Título del informe
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-
-        // Estado
-        Box(
-            modifier = Modifier
-                .background(
-                    color = statusColor.copy(alpha = 0.1f),
-                    shape = MaterialTheme.shapes.small
-                )
-                .padding(horizontal = 12.dp, vertical = 6.dp)
+            contentPadding = PaddingValues(top = 20.dp, bottom = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            Text(
-                text = status,
-                style = MaterialTheme.typography.labelMedium,
-                color = statusColor,
-                fontWeight = FontWeight.Medium
-            )
+            items(sampleInformes) { informe ->
+                InfoCard(
+                    date = informe.date,
+                    title = informe.title,
+                    status = informe.status,
+                    borderColor = colorBorde,
+                    statusColor = informe.statusColor,
+                    imagen = informe.imagen,
+                    onMoreInformationClick = onInformePlantaClick
+                )
+            }
         }
+        BottomNavigationBar()
     }
 }
 
