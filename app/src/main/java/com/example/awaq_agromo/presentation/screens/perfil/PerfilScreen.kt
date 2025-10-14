@@ -55,7 +55,7 @@ import com.example.awaq_agromo.presentation.screens.dashboard.InformeData
 // import com.example.awaq_agromo.data.informes.InformeData
 
 val sampleInformes: List<InformeData> = listOf(
-    InformeData("12 sept", "Informe integral", "Atender", Color.Red, R.drawable.image_ph),
+    InformeData("12 sept", "Informe integral", "Atender",  Color.Red, R.drawable.image_ph),
     InformeData("15 sept", "Revisión hortalizas", "En curso", Color.Blue, R.drawable.image_ph),
     InformeData("20 sept", "Detección de plaga", "Urgente", Color.Red, R.drawable.planta_de_pimientos),
     InformeData("25 sept", "Abono orgánico", "Pendiente", Color.Gray, R.drawable.image_ph),
