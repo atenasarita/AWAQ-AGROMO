@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -43,21 +44,21 @@ data class InformeData(
     val imageRes: Int? = null // Optional image for report
 )
 
-/*
+
 val sampleCropItems = listOf(
     CropItem(R.drawable.chiili, "Chili"),
-    CropItem(R.drawable.eggplant_icon, "Eggplant"),
-    CropItem(R.drawable.tomato_icon, "Tomato"),
-    CropItem(R.drawable.brocoli_icon, "Brocoli"),
-    CropItem(R.drawable.pumpkin_icon, "Pumpkin"),
+    CropItem(R.drawable.eggplant, "Berenjena"),
+    CropItem(R.drawable.olive, "Aceituna"),
+    CropItem(R.drawable.tomate, "Tomate"),
+    CropItem(R.drawable.calabaza, "Calabaza"),
 )
 
 val sampleInformes: List<InformeData> = listOf(
-    InformeData("12 sept", "Informe integral", "Pimiento", Color(0xFF6A9930), R.drawable.pimiento_report),
-    InformeData("23 sept", "pH del suelo", "Café", Color(0xFFE6B800), R.drawable.coffee_report),
-    InformeData("28 sept", "Fertilización", "Abono", Color(0xFF6A9930), R.drawable.fertilizer_report),
-    InformeData("05 oct", "Revisión hortalizas", "Atender", Color.Red, R.drawable.tomato_report),
-    InformeData("08 oct", "Detección de plaga", "Urgente", Color.Red, R.drawable.pest_report),
+    InformeData("12 sept", "Informe integral", "Pimiento", Color(0xFF6A9930), R.drawable.image_ph),
+    InformeData("23 sept", "pH del suelo", "Café", Color(0xFFE6B800), R.drawable.planta_de_pimientos),
+    InformeData("28 sept", "Fertilización", "Abono", Color(0xFF6A9930), R.drawable.image_ph),
+    InformeData("05 oct", "Revisión hortalizas", "Atender", Color.Red, R.drawable.image_ph),
+    InformeData("08 oct", "Detección de plaga", "Urgente", Color.Red, R.drawable.image_ph),
 )
 
 // --- Composable: DashboardScreen ---
@@ -201,7 +202,7 @@ fun WeatherCard() {
                 WeatherDetail("Humedad", "49%", Icons.Default.WaterDrop)
                 WeatherDetail("Viento", "10 Km/h", Icons.Default.Air)
                 WeatherDetail("Lluvias", "72%", Icons.Default.Cloud)
-                WeatherDetailWithStatus("Pulverización", "Desfavorable", Color.Red, Icons.Default.SprayCan)
+                WeatherDetailWithStatus("Pulverización", "Desfavorable", Color.Red, Icons.Default.Shower )
             }
         }
     }
@@ -283,7 +284,7 @@ fun MonitoringCard() {
             Spacer(Modifier.width(16.dp))
             // Image (man with hat)
             Image(
-                painter = painterResource(id = R.drawable.man_with_hat), // Replace with your image resource
+                painter = painterResource(id = R.drawable.tomafoto), // Replace with your image resource
                 contentDescription = "Man with hat",
                 modifier = Modifier.size(100.dp),
                 contentScale = ContentScale.Fit
@@ -431,8 +432,8 @@ fun CropPhotosSection() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            PhotoInstructionCard("1", "Tomar foto\nde cultivo", R.drawable.take_photo_icon)
-            PhotoInstructionCard("2", "Añádala a\nsu informe", R.drawable.add_to_report_icon)
+            PhotoInstructionCard("1", "Tomar foto de cultivo", R.drawable.tomafoto)
+            PhotoInstructionCard("2", "Añádala a su informe", R.drawable.informenuevo)
         }
         Spacer(Modifier.height(16.dp))
         Button(
@@ -592,9 +593,9 @@ fun InformeCard(informe: InformeData) {
 @Preview(showSystemUi = true, backgroundColor = 0xFFF0F4C3) // Set a background color for preview
 @Composable
 fun DashboardScreenPreview() {
-    AgromoTheme { /
+    AgromoTheme {
         DashboardScreen()
     }
 }
-*/
+
 
