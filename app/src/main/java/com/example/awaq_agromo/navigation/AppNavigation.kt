@@ -58,14 +58,5 @@ fun AppNavigation(navController: NavHostController) {
         composable("perfil") {
             PerfilScreen()
         }
-        composable("cultivo") {
-            IdCultivoScreen(navController)
-        }
-        composable("clima") {
-            ClimaScreen(navController)
-        }
-        composable("photo") {
-            PhotoScreen(navController)
-        }
     }
 }

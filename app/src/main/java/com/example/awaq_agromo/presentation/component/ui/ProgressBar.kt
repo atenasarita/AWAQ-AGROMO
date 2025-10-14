@@ -1,4 +1,4 @@
-package com.example.awaq_agromo.components
+package com.example.awaq_agromo.presentation.component.ui
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height

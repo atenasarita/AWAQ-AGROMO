@@ -1,4 +1,4 @@
-package com.example.awaq_agromo.ui.theme
+package com.example.awaq_agromo.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -15,10 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.awaq_agromo.components.PrimaryButton
-import com.example.awaq_agromo.components.ProgressBar
-import com.example.awaq_agromo.components.SubtitleText
-import com.example.awaq_agromo.components.TitleText
+import com.example.awaq_agromo.presentation.component.buttons.PrimaryButton
+import com.example.awaq_agromo.presentation.component.ui.ProgressBar
+import com.example.awaq_agromo.presentation.component.texts.SubtitleText
+import com.example.awaq_agromo.presentation.component.texts.TitleText
 
 @Preview(showSystemUi = true)
 @Composable

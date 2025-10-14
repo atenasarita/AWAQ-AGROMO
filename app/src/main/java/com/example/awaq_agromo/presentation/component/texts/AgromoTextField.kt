@@ -1,4 +1,4 @@
-package com.example.awaq_agromo.components
+package com.example.awaq_agromo.presentation.component.texts
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,11 +11,12 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.awaq_agromo.ui.theme.Neutral400
-import com.example.awaq_agromo.ui.theme.PrincipalPrimary
+import com.example.awaq_agromo.presentation.theme.Neutral400
+import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
 
 
 @Composable
@@ -43,8 +44,8 @@ fun AgromoTextField(
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             shape = RoundedCornerShape(16.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = androidx.compose.ui.graphics.Color.Transparent,
-                unfocusedContainerColor = androidx.compose.ui.graphics.Color.Transparent,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
                 focusedBorderColor = PrincipalPrimary,
                 unfocusedBorderColor = Neutral400,
                 cursorColor = PrincipalPrimary,

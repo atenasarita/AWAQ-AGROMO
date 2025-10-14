@@ -1,4 +1,4 @@
-package com.example.awaq_agromo.components
+package com.example.awaq_agromo.presentation.component.buttons
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,8 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.example.awaq_agromo.ui.theme.Black
-import com.example.awaq_agromo.ui.theme.PrincipalPrimary
+import com.example.awaq_agromo.presentation.theme.Black
+import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
 
 @Composable
 fun AgromoPrivacyCheckbox(

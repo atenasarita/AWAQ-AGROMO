@@ -1,4 +1,4 @@
-package com.example.awaq_agromo.components.profileComponents
+package com.example.awaq_agromo.presentation.component.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,7 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.awaq_agromo.R
-import com.example.awaq_agromo.components.SubtitleText
+import com.example.awaq_agromo.presentation.component.texts.SubtitleText
 
 @Composable
 fun InfoCard(

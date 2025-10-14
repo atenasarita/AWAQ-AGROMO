@@ -1,10 +1,7 @@
 package com.example.awaq_agromo.presentation.screens.perfil
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,16 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -38,15 +31,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.awaq_agromo.R
-import com.example.awaq_agromo.components.TitleText
-import com.example.awaq_agromo.components.profileComponents.InfoCard
-import com.example.awaq_agromo.components.profileComponents.UserCard
-import com.example.awaq_agromo.data.informes.InformeData
+import com.example.awaq_agromo.presentation.component.texts.TitleText
+import com.example.awaq_agromo.presentation.component.profile.InfoCard
+import com.example.awaq_agromo.presentation.component.profile.UserCard
+import com.example.awaq_agromo.presentation.model.InformeData
 
 private val sampleInformes: List<InformeData> = listOf(
     InformeData("12 sept", "Informe integral", "Atender", Color.Red, R.drawable.image_ph),

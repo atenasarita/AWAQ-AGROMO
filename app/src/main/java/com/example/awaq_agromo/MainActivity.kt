@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
 import com.example.awaq_agromo.navigation.AppNavigation
-import com.example.awaq_agromo.ui.theme.AgromoTheme
+import com.example.awaq_agromo.presentation.theme.AgromoTheme
 
 
 /*class MainActivity : ComponentActivity() {

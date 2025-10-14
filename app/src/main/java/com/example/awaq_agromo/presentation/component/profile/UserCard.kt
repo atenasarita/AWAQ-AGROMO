@@ -1,11 +1,10 @@
-package com.example.awaq_agromo.components.profileComponents
+package com.example.awaq_agromo.presentation.component.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,8 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.awaq_agromo.R
-import com.example.awaq_agromo.components.SubtitleText
-import com.example.awaq_agromo.components.TitleText
+import com.example.awaq_agromo.presentation.component.texts.SubtitleText
+import com.example.awaq_agromo.presentation.component.texts.TitleText
 
 @Composable
 fun UserCard(

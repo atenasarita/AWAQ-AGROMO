@@ -1,4 +1,4 @@
-package com.example.awaq_agromo.components
+package com.example.awaq_agromo.presentation.component.ui
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.Image
-import coil.size.Size
 import com.example.awaq_agromo.R
 
 

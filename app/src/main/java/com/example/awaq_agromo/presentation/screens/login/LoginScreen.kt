@@ -10,13 +10,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.awaq_agromo.components.AgromoLogo
-import com.example.awaq_agromo.components.AgromoPasswordField
-import com.example.awaq_agromo.components.AgromoPrimaryButton
-import com.example.awaq_agromo.components.AgromoSecondaryButton
-import com.example.awaq_agromo.components.AgromoTextField
-import com.example.awaq_agromo.ui.theme.Primary50
-import com.example.awaq_agromo.ui.theme.AgromoTheme
+import com.example.awaq_agromo.presentation.component.ui.AgromoLogo
+import com.example.awaq_agromo.presentation.component.texts.AgromoPasswordField
+import com.example.awaq_agromo.presentation.component.buttons.AgromoPrimaryButton
+import com.example.awaq_agromo.presentation.component.buttons.AgromoSecondaryButton
+import com.example.awaq_agromo.presentation.component.texts.AgromoTextField
+import com.example.awaq_agromo.presentation.theme.Primary50
+import com.example.awaq_agromo.presentation.theme.AgromoTheme
 
 @Composable
 fun LoginScreen(onDashboardClick: () -> Unit) {

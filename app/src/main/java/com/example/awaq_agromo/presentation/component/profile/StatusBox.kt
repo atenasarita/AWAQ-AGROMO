@@ -1,4 +1,4 @@
-package com.example.awaq_agromo.components.profileComponents
+package com.example.awaq_agromo.presentation.component.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

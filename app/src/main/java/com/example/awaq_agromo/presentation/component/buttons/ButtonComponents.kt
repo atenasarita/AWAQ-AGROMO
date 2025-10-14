@@ -1,9 +1,10 @@
-package com.example.awaq_agromo.components
+package com.example.awaq_agromo.presentation.component.buttons
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.awaq_agromo.ui.theme.Primary900
+import com.example.awaq_agromo.presentation.theme.Primary900
 
 @Composable
 fun PrimaryButton(
@@ -30,7 +31,7 @@ fun PrimaryButton(
             containerColor = Primary900,
             contentColor = Color.White
         ),
-        shape = androidx.compose.material3.MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.medium,
         enabled = enabled
     ) {
         Text(

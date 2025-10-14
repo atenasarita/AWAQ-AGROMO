@@ -18,10 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.awaq_agromo.components.AgromoLogo
-import com.example.awaq_agromo.components.PrimaryButton
-import com.example.awaq_agromo.components.SecondaryButton
-import com.example.awaq_agromo.components.SubtitleText
+import com.example.awaq_agromo.presentation.component.ui.AgromoLogo
+import com.example.awaq_agromo.presentation.component.buttons.PrimaryButton
+import com.example.awaq_agromo.presentation.component.buttons.SecondaryButton
+import com.example.awaq_agromo.presentation.component.texts.SubtitleText
 
 @Composable
 fun WelcomeScreen(
