@@ -50,7 +50,7 @@ fun Onboarding_Page_3Screen(
 
         PrimaryButton(
             text = "Completar",
-            onClick = {onDashboardClick}
+            onClick = onDashboardClick
         )
     }
 }
