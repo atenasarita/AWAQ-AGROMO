@@ -28,7 +28,7 @@ fun AppNavigation(navController: NavHostController) {
             )
         }
         composable("login") {
-            LoginScreen(onDashboardClick = { navController.navigate("dashboard") })
+            LoginScreen(onDashboardClick = { navController.navigate("perfil") })
         }
         composable("registration") {
             RegistrationScreen(
@@ -47,7 +47,7 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable("Onboarding_3") {
             Onboarding_Page_3Screen(
-                onDashboardClick = {navController.navigate("dashboard")}
+                onDashboardClick = {navController.navigate("perfil")}
             )
         }
         composable("dashboard") {
