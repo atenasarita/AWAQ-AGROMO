@@ -50,9 +50,11 @@ import com.example.awaq_agromo.components.NavItem
 import com.example.awaq_agromo.components.TitleText
 import com.example.awaq_agromo.components.profileComponents.InfoCard
 import com.example.awaq_agromo.components.profileComponents.UserCard
+import com.example.awaq_agromo.presentation.screens.dashboard.InformeData
+
 // import com.example.awaq_agromo.data.informes.InformeData
 
-/* private val sampleInformes: List<InformeData> = listOf(
+val sampleInformes: List<InformeData> = listOf(
     InformeData("12 sept", "Informe integral", "Atender", Color.Red, R.drawable.image_ph),
     InformeData("15 sept", "Revisión hortalizas", "En curso", Color.Blue, R.drawable.image_ph),
     InformeData("20 sept", "Detección de plaga", "Urgente", Color.Red, R.drawable.planta_de_pimientos),
@@ -61,7 +63,7 @@ import com.example.awaq_agromo.components.profileComponents.UserCard
     InformeData("01 oct", "Mantenimiento", "En curso", Color.Blue, R.drawable.planta_de_pimientos),
     InformeData("05 oct", "Fertilización", "Pendiente", Color.Gray, R.drawable.image_ph),
 )
-*/
+
 @Preview(showSystemUi = true)
 @Composable
 fun PerfilScreen(
@@ -151,12 +153,13 @@ fun PerfilScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .weight(1f)
+                    .padding(bottom = 90.dp),
 
                 contentPadding = PaddingValues(top = 20.dp, bottom = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                /*
+
                 items(sampleInformes) { informe ->
                     InfoCard(
                         date = informe.date,
@@ -164,11 +167,10 @@ fun PerfilScreen(
                         status = informe.status,
                         borderColor = colorBorde,
                         statusColor = informe.statusColor,
-                        imagen = informe.imagen,
+                       //  imagen = informe.imagen,
                         onMoreInformationClick = onInformePlantaClick
                     )
                 }
-            }*/
             }
         }
 
