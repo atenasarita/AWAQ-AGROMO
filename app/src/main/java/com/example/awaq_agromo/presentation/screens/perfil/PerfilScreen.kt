@@ -34,21 +34,25 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.awaq_agromo.R
+import com.example.awaq_agromo.components.BottomBar
+import com.example.awaq_agromo.components.NavItem
 import com.example.awaq_agromo.components.TitleText
 import com.example.awaq_agromo.components.profileComponents.InfoCard
 import com.example.awaq_agromo.components.profileComponents.UserCard
-import com.example.awaq_agromo.data.informes.InformeData
+// import com.example.awaq_agromo.data.informes.InformeData
 
-private val sampleInformes: List<InformeData> = listOf(
+/* private val sampleInformes: List<InformeData> = listOf(
     InformeData("12 sept", "Informe integral", "Atender", Color.Red, R.drawable.image_ph),
     InformeData("15 sept", "Revisión hortalizas", "En curso", Color.Blue, R.drawable.image_ph),
     InformeData("20 sept", "Detección de plaga", "Urgente", Color.Red, R.drawable.planta_de_pimientos),
@@ -57,7 +61,7 @@ private val sampleInformes: List<InformeData> = listOf(
     InformeData("01 oct", "Mantenimiento", "En curso", Color.Blue, R.drawable.planta_de_pimientos),
     InformeData("05 oct", "Fertilización", "Pendiente", Color.Gray, R.drawable.image_ph),
 )
-
+*/
 @Preview(showSystemUi = true)
 @Composable
 fun PerfilScreen(
@@ -70,148 +74,117 @@ fun PerfilScreen(
     val colorTexto = colorBorde
     val colorIconos = colorBorde
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Spacer(modifier = Modifier.height(50.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+    var selectedRoute by remember { mutableStateOf(NavItem.Inicio.route) }
+
+    Box(){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
-            IconButton(
-                onClick = {} // No se que se deberia de poder hacerse...
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = "Perfil",
-                    tint = colorIconos,
-                    modifier = Modifier.size(24.dp)
+                IconButton(
+                    onClick = {} // No se que se deberia de poder hacerse...
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBackIosNew,
+                        contentDescription = "Perfil",
+                        tint = colorIconos,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                TitleText(
+                    text = ("Perfil"),
+                    color = Color.Black,
+                    fontSize = 20.sp
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = colorIconos,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+            }
+            Spacer(modifier = Modifier.height(15.dp))
+            HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
+            Spacer(modifier = Modifier.height(30.dp))
+
+            UserCard(
+                textColor = colorTexto,
+                borderColor = colorBorde,
+                nombreUsuario = "Nombre de Usuario",
+                ubicacion = "Lugar del Usuario",
+                imagenUsuario = R.drawable.chiili
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TitleText(
+                    text = ("Mis informes"),
+                    color = Color.Black,
+                    fontSize = 30.sp
                 )
             }
 
-            TitleText(
-                text = ("Perfil"),
-                color = Color.Black,
-                fontSize = 20.sp
-            )
+            Spacer(modifier = Modifier.height(15.dp))
 
-            Spacer(modifier = Modifier.weight(1f))
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
 
-            IconButton(
-                onClick = {}
+                contentPadding = PaddingValues(top = 20.dp, bottom = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings",
-                    tint = colorIconos,
-                    modifier = Modifier.size(24.dp)
-                )
+                /*
+                items(sampleInformes) { informe ->
+                    InfoCard(
+                        date = informe.date,
+                        title = informe.title,
+                        status = informe.status,
+                        borderColor = colorBorde,
+                        statusColor = informe.statusColor,
+                        imagen = informe.imagen,
+                        onMoreInformationClick = onInformePlantaClick
+                    )
+                }
+            }*/
             }
-
-        }
-        Spacer(modifier = Modifier.height(15.dp))
-        HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
-        Spacer(modifier = Modifier.height(30.dp))
-
-        UserCard(
-            textColor = colorTexto,
-            borderColor = colorBorde,
-            nombreUsuario = "Nombre de Usuario",
-            ubicacion = "Lugar del Usuario",
-            imagenUsuario = R.drawable.chiili
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            TitleText(
-                text = ("Mis informes"),
-                color = Color.Black,
-                fontSize = 30.sp
-            )
         }
 
-        Spacer(modifier = Modifier.height(15.dp))
-
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
-
-            contentPadding = PaddingValues(top = 20.dp, bottom = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(15.dp)
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(sampleInformes) { informe ->
-                InfoCard(
-                    date = informe.date,
-                    title = informe.title,
-                    status = informe.status,
-                    borderColor = colorBorde,
-                    statusColor = informe.statusColor,
-                    imagen = informe.imagen,
-                    onMoreInformationClick = onInformePlantaClick
-                )
-            }
-        }
-        BottomNavigationBar()
-    }
-}
-
-@Composable
-fun BottomNavigationBar() {
-    val navigationItems = listOf(
-        "Inicio" to Icons.Default.Home,
-        "Monitoreo" to Icons.Default.Search,
-        "Comunidad" to Icons.Default.Face,
-        "Perfil" to Icons.Default.Person
-    )
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        navigationItems.forEach { (title, icon) ->
-            BottomNavItem(
-                title = title,
-                icon = icon,
-                isSelected = title == "Perfil" // Por ahora hardcodeado
+            BottomBar(
+                selectedRoute = selectedRoute,
+                onNavigate = { newRoute ->
+                    selectedRoute = newRoute
+                }
             )
         }
-    }
-}
-
-@Composable
-fun BottomNavItem(
-    title: String,
-    icon: ImageVector,
-    isSelected: Boolean
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = title,
-            tint = if (isSelected) Color(0xFF829500) else Color.Gray,
-            modifier = Modifier.size(24.dp)
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelSmall,
-            color = if (isSelected) Color(0xFF829500) else Color.Gray
-        )
     }
 }

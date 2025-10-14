@@ -12,6 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val PrincipalPrimary = Color(0xFF4E7029)
 val Primary900 = Color(0xFF344E18)
+val Primary300 = Color(0xFFD9FFB0)
 val Primary50 = Color(0xFFFAFFF5)
 
 val PrincipalSecondary = Color(0xFFA5BE00)
