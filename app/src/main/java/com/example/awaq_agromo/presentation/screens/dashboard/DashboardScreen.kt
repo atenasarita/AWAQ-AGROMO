@@ -67,7 +67,6 @@ val sampleInformesRecientes: List<InformeData> = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(navController: NavController) {
-    var selectedRoute by remember { mutableStateOf(NavItem.Inicio.route) }
 
     Scaffold(
     ) { paddingValues ->
@@ -77,7 +76,7 @@ fun DashboardScreen(navController: NavController) {
                 .padding(paddingValues)
                 .background(MaterialTheme.colorScheme.background),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(25.dp)
+            verticalArrangement = Arrangement.spacedBy(35.dp)
         ) {
             item { HeaderSection("María Pia") }
             item { WeatherCard() }
@@ -86,6 +85,40 @@ fun DashboardScreen(navController: NavController) {
             item { MisCultivos(sampleCropItems) }
             item { QuickInputSection() }
             item { CropPhotosSection() }
+
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Informes Recientes",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    TextButton(
+                        onClick = {
+                            navController.navigate(NavItem.Perfil.route) {
+                                popUpTo(NavItem.Inicio.route) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    ) {
+                        Text(
+                            text = "Ver todo",
+                            color = PrincipalPrimary,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                }
+            }
 
             items(sampleInformesRecientes) { informe ->
                 InfoCard(
@@ -353,3 +386,11 @@ fun InformeCard(informe: InformeData) {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun DashboardScreenPreview() {
+    AgromoTheme {
+        val navController = rememberNavController()
+        DashboardScreen(navController = navController)
+    }
+}
