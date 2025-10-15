@@ -27,7 +27,7 @@ fun RegistroExitosoScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "✅ Registro completado con éxito",
+                text = "Registro completado con éxito",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
