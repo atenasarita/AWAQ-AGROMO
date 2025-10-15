@@ -33,33 +33,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.awaq_agromo.R
-import com.example.awaq_agromo.presentation.component.ui.BottomBar
 import com.example.awaq_agromo.presentation.component.ui.NavItem
 import com.example.awaq_agromo.presentation.component.profile.InfoCard
 import com.example.awaq_agromo.presentation.component.profile.UserCard
 import com.example.awaq_agromo.presentation.component.texts.TitleText
 import com.example.awaq_agromo.presentation.screens.dashboard.InformeData
-
-// import com.example.awaq_agromo.data.informes.InformeData
+import com.example.awaq_agromo.presentation.screens.dashboard.sampleInformesRecientes
 
 val sampleInformes: List<InformeData> = listOf(
-    InformeData("12 sept", "Informe integral", "Atender",  Color.Red, R.drawable.image_ph),
-    InformeData("15 sept", "Revisión hortalizas", "En curso", Color.Blue, R.drawable.image_ph),
-    InformeData("20 sept", "Detección de plaga", "Urgente", Color.Red, R.drawable.planta_de_pimientos),
-    InformeData("25 sept", "Abono orgánico", "Pendiente", Color.Gray, R.drawable.image_ph),
-    InformeData("28 sept", "Ajuste de riego", "Completado", Color.Green, R.drawable.planta_de_pimientos),
-    InformeData("01 oct", "Mantenimiento", "En curso", Color.Blue, R.drawable.planta_de_pimientos),
-    InformeData("05 oct", "Fertilización", "Pendiente", Color.Gray, R.drawable.image_ph),
+    InformeData("12 sept", "Informe integral", "Atender",  Color.Red, R.drawable.image_ph, "Calabaza"),
+    InformeData("15 sept", "Revisión hortalizas", "En curso", Color.Blue, R.drawable.image_ph, "Pimiento"),
+    InformeData("20 sept", "Detección de plaga", "Urgente", Color.Red, R.drawable.planta_de_pimientos, "Calabaza"),
+    InformeData("25 sept", "Abono orgánico", "Pendiente", Color.Gray, R.drawable.image_ph, "Berenjena"),
+    InformeData("28 sept", "Ajuste de riego", "Completado", Color.Green, R.drawable.planta_de_pimientos, "Aceituna"),
+    InformeData("01 oct", "Mantenimiento", "En curso", Color.Blue, R.drawable.planta_de_pimientos, "Chili"),
+    InformeData("05 oct", "Fertilización", "Pendiente", Color.Gray, R.drawable.image_ph, "Tomate"),
 )
 
 @Preview(showSystemUi = true)
 @Composable
-fun PerfilScreen(
-    onDashboardClick: () -> Unit = {},
-    onMonitoringClick: () -> Unit = {},
-    onInformePlantaClick: () -> Unit = {},
-    onCommunityClick: () -> Unit = {} // Desavilitado, para implemetacion futura
-) {
+fun PerfilScreen() {
     val colorBorde = Color(0xFF344E18)
     val colorTexto = colorBorde
     val colorIconos = colorBorde
@@ -148,15 +141,12 @@ fun PerfilScreen(
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
 
-                items(sampleInformes) { informe ->
+                items(sampleInformesRecientes) { informe ->
                     InfoCard(
-                        date = informe.date,
-                        title = informe.title,
-                        status = informe.status,
-                        borderColor = colorBorde,
-                        statusColor = informe.statusColor,
-                        //  imagen = informe.imagen,
-                        onMoreInformationClick = onInformePlantaClick
+                        informe = informe,
+                        onMoreInformationClick = {
+                             // TODO
+                        }
                     )
                 }
             }

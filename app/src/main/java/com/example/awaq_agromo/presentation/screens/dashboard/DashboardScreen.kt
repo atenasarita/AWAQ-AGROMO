@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.awaq_agromo.R
-import com.example.awaq_agromo.presentation.component.ui.BottomBar
 import com.example.awaq_agromo.presentation.component.ui.HeaderSection
 import com.example.awaq_agromo.presentation.component.ui.NavItem
 import com.example.awaq_agromo.presentation.component.dashboard.MonitoreoCard
@@ -34,8 +33,8 @@ import com.example.awaq_agromo.presentation.component.dashboard.MisCultivos
 import com.example.awaq_agromo.presentation.component.dashboard.WeatherCard
 import com.example.awaq_agromo.presentation.component.profile.InfoCard
 // import com.example.awaq_agromo.presentation.screens.perfil.sampleInformes
-import com.example.awaq_agromo.presentation.theme.PrincipalPrimary // Your defined colors
-import com.example.awaq_agromo.presentation.theme.AgromoTheme // Your main theme
+import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
+import com.example.awaq_agromo.presentation.theme.AgromoTheme
 
 data class CropItem(val iconRes: Int, val description: String)
 data class InformeData(
@@ -43,7 +42,8 @@ data class InformeData(
     val title: String,
     val status: String,
     val statusColor: Color,
-    val imageRes: Int? = null
+    val imageRes: Int? = null,
+    val planta: String
 )
 
 val sampleCropItems = listOf(
@@ -57,11 +57,11 @@ val sampleCropItems = listOf(
 )
 
 val sampleInformesRecientes: List<InformeData> = listOf(
-    InformeData("12 sept", "Informe integral", "Pimiento", Color(0xFF6A9930), R.drawable.image_ph),
-    InformeData("23 sept", "pH del suelo", "Café", Color(0xFFE6B800), R.drawable.planta_de_pimientos),
-    InformeData("28 sept", "Fertilización", "Abono", Color(0xFF6A9930), R.drawable.image_ph),
-    InformeData("05 oct", "Revisión hortalizas", "Atender", Color.Red, R.drawable.image_ph),
-    InformeData("08 oct", "Detección de plaga", "Urgente", Color.Red, R.drawable.image_ph),
+    InformeData("12 sept", "Informe integral", "Pimiento", Color(0xFF6A9930), R.drawable.image_ph, "Calabaza"),
+    InformeData("23 sept", "pH del suelo", "Café", Color(0xFFE6B800), R.drawable.planta_de_pimientos, "Pimiento"),
+    InformeData("28 sept", "Fertilización", "Abono", Color(0xFF6A9930), R.drawable.image_ph, "Aceituna"),
+    InformeData("05 oct", "Revisión hortalizas", "Atender", Color.Red, R.drawable.image_ph, "Tomate"),
+    InformeData("08 oct", "Detección de plaga", "Urgente", Color.Red, R.drawable.image_ph, "Tomate"),
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -122,15 +122,12 @@ fun DashboardScreen(navController: NavController) {
 
             items(sampleInformesRecientes) { informe ->
                 InfoCard(
-                    date = informe.date,
-                    title = informe.title,
-                    status = informe.status,
-                    statusColor = informe.statusColor,
-                    // imagen = informe.imageRes
-                    //   onMoreInformationClick = onInformePlantaClick
+                    informe = informe,
+                    onMoreInformationClick = {
+                        // Optional: navigate to detailed report
+                    }
                 )
             }
-
         }
     }
 }
@@ -282,109 +279,6 @@ fun PhotoInstructionCard(number: String, instruction: String, imageRes: Int) {
     }
 }
 
-@Composable
-fun RecentReportsSection(informes: List<InformeData>) {
-    Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Resumen de informes\nrecientes",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            TextButton(onClick = { /* TODO: View all reports */ }) {
-                Text(
-                    text = "Ver todos",
-                    color = PrincipalPrimary,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.labelLarge
-                )
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
-                    contentDescription = "Ver todos",
-                    tint = PrincipalPrimary,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
-        Spacer(Modifier.height(16.dp))
-        // Using LazyColumn here so it can scroll independently if needed,
-        // but it's nested inside another LazyColumn for the main screen scroll.
-        // It might be better to just use a Column if you don't expect many reports.
-        // For simplicity and if `informes` isn't huge, let's just use Column.
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            informes.forEach { informe ->
-                InformeCard(informe)
-            }
-        }
-    }
-}
-
-
-@Composable
-fun InformeCard(informe: InformeData) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-    ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (informe.imageRes != null) {
-                Image(
-                    painter = painterResource(id = informe.imageRes),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(Modifier.width(12.dp))
-            }
-            Column(Modifier.weight(1f)) {
-                Text(
-                    text = informe.date,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = informe.title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(Modifier.height(4.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Dot indicator
-                    Box(
-                        modifier = Modifier
-                            .size(8.dp)
-                            .clip(CircleShape)
-                            .background(informe.statusColor)
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text(
-                        text = informe.status,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-            Spacer(Modifier.width(12.dp))
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowRight,
-                contentDescription = "Details",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
