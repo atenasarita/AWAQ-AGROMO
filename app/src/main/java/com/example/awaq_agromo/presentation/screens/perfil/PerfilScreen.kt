@@ -37,7 +37,7 @@ import com.example.awaq_agromo.presentation.component.ui.NavItem
 import com.example.awaq_agromo.presentation.component.profile.InfoCard
 import com.example.awaq_agromo.presentation.component.profile.UserCard
 import com.example.awaq_agromo.presentation.component.texts.TitleText
-import com.example.awaq_agromo.presentation.screens.dashboard.InformeData
+import com.example.awaq_agromo.presentation.model.InformeData
 import com.example.awaq_agromo.presentation.screens.dashboard.sampleInformesRecientes
 
 val sampleInformes: List<InformeData> = listOf(

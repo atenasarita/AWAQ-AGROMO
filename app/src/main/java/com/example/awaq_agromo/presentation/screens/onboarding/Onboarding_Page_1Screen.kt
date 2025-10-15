@@ -32,7 +32,7 @@ fun Onboarding_Page_1Screen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp),
+            .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -40,11 +40,8 @@ fun Onboarding_Page_1Screen(
             text = "¡Bienvenido a Agromo!"
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
-
         Box(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(16.dp)
                 .background(
                     Color(0xFF829500),
@@ -58,18 +55,14 @@ fun Onboarding_Page_1Screen(
             )
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
-
         Image(
             painter = painterResource(id = R.drawable.onboarding_page_1),
             contentDescription = "Granjera cosechando",
-            modifier = Modifier.size(120.dp).fillMaxWidth()
+            modifier = Modifier.size(500.dp)
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
-
         PrimaryButton(
-            text = "Quiero registrarme",
+            text = "Comenzar",
             onClick = onNextOnboardingPage2
         )
     }

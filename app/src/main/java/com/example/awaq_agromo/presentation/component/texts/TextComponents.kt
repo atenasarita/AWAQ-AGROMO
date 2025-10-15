@@ -30,8 +30,9 @@ fun TitleText(
 
 @Composable
 fun SubtitleText(
-    text: String,
     modifier: Modifier = Modifier,
+    text: String,
+    textAlign: TextAlign = TextAlign.Center,
     color: Color = Color(0xFF666666)
 ) {
     Text(
@@ -39,7 +40,7 @@ fun SubtitleText(
         style = MaterialTheme.typography.bodyLarge.copy(
             fontSize = 18.sp,
             color = color,
-            textAlign = TextAlign.Center,
+            textAlign = textAlign,
             lineHeight = 24.sp
         ),
         modifier = modifier
