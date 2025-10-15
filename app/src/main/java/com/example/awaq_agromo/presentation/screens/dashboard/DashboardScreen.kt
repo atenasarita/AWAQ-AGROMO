@@ -32,19 +32,11 @@ import com.example.awaq_agromo.presentation.component.dashboard.MonitoreoCard
 import com.example.awaq_agromo.presentation.component.dashboard.MisCultivos
 import com.example.awaq_agromo.presentation.component.dashboard.WeatherCard
 import com.example.awaq_agromo.presentation.component.profile.InfoCard
-// import com.example.awaq_agromo.presentation.screens.perfil.sampleInformes
+import com.example.awaq_agromo.presentation.model.InformeData
 import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
 import com.example.awaq_agromo.presentation.theme.AgromoTheme
 
 data class CropItem(val iconRes: Int, val description: String)
-data class InformeData(
-    val date: String,
-    val title: String,
-    val status: String,
-    val statusColor: Color,
-    val imageRes: Int? = null,
-    val planta: String
-)
 
 val sampleCropItems = listOf(
     CropItem(R.drawable.chiili, "Chili"),

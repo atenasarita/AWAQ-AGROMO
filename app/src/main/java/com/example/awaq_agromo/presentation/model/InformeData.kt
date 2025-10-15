@@ -8,5 +8,6 @@ data class InformeData(
     val title: String,
     val status: String,
     val statusColor: Color,
-    @DrawableRes val imagen: Int
+    @DrawableRes val imageRes: Int,
+    val planta: String
 )

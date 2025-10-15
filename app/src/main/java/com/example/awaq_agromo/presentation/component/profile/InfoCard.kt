@@ -1,7 +1,6 @@
 package com.example.awaq_agromo.presentation.component.profile
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.awaq_agromo.presentation.component.texts.SubtitleText
-import com.example.awaq_agromo.presentation.screens.dashboard.InformeData
+import com.example.awaq_agromo.presentation.model.InformeData
 
 
 @Composable
@@ -53,16 +52,14 @@ fun InfoCard(
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (informe.imageRes != null) {
-            Image(
-                painter = painterResource(id = informe.imageRes),
-                contentDescription = informe.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(RoundedCornerShape(cornerRadius))
-            )
-        }
+        Image(
+            painter = painterResource(id = informe.imageRes),
+            contentDescription = informe.title,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(120.dp)
+                .clip(RoundedCornerShape(cornerRadius))
+        )
 
         Spacer(modifier = Modifier.width(16.dp))
 
@@ -99,7 +96,8 @@ fun InfoCardPreview() {
         title = "Informe integral",
         status = "Completo",
         statusColor = Color(0xFF6A9930),
-        planta = "Cebolla"
+        imageRes = com.example.awaq_agromo.R.drawable.image_ph,
+        planta = "Cebolla",
     )
 
     InfoCard(
