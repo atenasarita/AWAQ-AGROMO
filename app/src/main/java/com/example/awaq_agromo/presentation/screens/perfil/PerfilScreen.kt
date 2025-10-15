@@ -1,7 +1,10 @@
 package com.example.awaq_agromo.presentation.screens.perfil
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,12 +14,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -27,21 +34,28 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.awaq_agromo.R
-import com.example.awaq_agromo.presentation.component.texts.TitleText
+import com.example.awaq_agromo.presentation.component.ui.BottomBar
+import com.example.awaq_agromo.presentation.component.ui.NavItem
 import com.example.awaq_agromo.presentation.component.profile.InfoCard
 import com.example.awaq_agromo.presentation.component.profile.UserCard
-import com.example.awaq_agromo.presentation.model.InformeData
+import com.example.awaq_agromo.presentation.component.texts.TitleText
+import com.example.awaq_agromo.presentation.screens.dashboard.InformeData
 
-private val sampleInformes: List<InformeData> = listOf(
-    InformeData("12 sept", "Informe integral", "Atender", Color.Red, R.drawable.image_ph),
+// import com.example.awaq_agromo.data.informes.InformeData
+
+val sampleInformes: List<InformeData> = listOf(
+    InformeData("12 sept", "Informe integral", "Atender",  Color.Red, R.drawable.image_ph),
     InformeData("15 sept", "Revisión hortalizas", "En curso", Color.Blue, R.drawable.image_ph),
     InformeData("20 sept", "Detección de plaga", "Urgente", Color.Red, R.drawable.planta_de_pimientos),
     InformeData("25 sept", "Abono orgánico", "Pendiente", Color.Gray, R.drawable.image_ph),
@@ -62,148 +76,117 @@ fun PerfilScreen(
     val colorTexto = colorBorde
     val colorIconos = colorBorde
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Spacer(modifier = Modifier.height(50.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+    var selectedRoute by remember { mutableStateOf(NavItem.Inicio.route) }
+
+    Box(){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
-            IconButton(
-                onClick = {} // No se que se deberia de poder hacerse...
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = "Perfil",
-                    tint = colorIconos,
-                    modifier = Modifier.size(24.dp)
+                IconButton(
+                    onClick = {} // No se que se deberia de poder hacerse...
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBackIosNew,
+                        contentDescription = "Perfil",
+                        tint = colorIconos,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                TitleText(
+                    text = ("Perfil"),
+                    color = Color.Black,
+                    fontSize = 20.sp
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = colorIconos,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+            }
+            Spacer(modifier = Modifier.height(15.dp))
+            HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
+            Spacer(modifier = Modifier.height(30.dp))
+
+            UserCard(
+                textColor = colorTexto,
+                borderColor = colorBorde,
+                nombreUsuario = "Nombre de Usuario",
+                ubicacion = "Lugar del Usuario",
+                imagenUsuario = R.drawable.chiili
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TitleText(
+                    text = ("Mis informes"),
+                    color = Color.Black,
+                    fontSize = 30.sp
                 )
             }
 
-            TitleText(
-                text = ("Perfil"),
-                color = Color.Black,
-                fontSize = 20.sp
-            )
+            Spacer(modifier = Modifier.height(15.dp))
 
-            Spacer(modifier = Modifier.weight(1f))
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(bottom = 90.dp),
 
-            IconButton(
-                onClick = {}
+                contentPadding = PaddingValues(top = 20.dp, bottom = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings",
-                    tint = colorIconos,
-                    modifier = Modifier.size(24.dp)
-                )
+
+                items(sampleInformes) { informe ->
+                    InfoCard(
+                        date = informe.date,
+                        title = informe.title,
+                        status = informe.status,
+                        borderColor = colorBorde,
+                        statusColor = informe.statusColor,
+                        //  imagen = informe.imagen,
+                        onMoreInformationClick = onInformePlantaClick
+                    )
+                }
             }
-
-        }
-        Spacer(modifier = Modifier.height(15.dp))
-        HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
-        Spacer(modifier = Modifier.height(30.dp))
-
-        UserCard(
-            textColor = colorTexto,
-            borderColor = colorBorde,
-            nombreUsuario = "Nombre de Usuario",
-            ubicacion = "Lugar del Usuario",
-            imagenUsuario = R.drawable.chiili
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            TitleText(
-                text = ("Mis informes"),
-                color = Color.Black,
-                fontSize = 30.sp
-            )
         }
 
-        Spacer(modifier = Modifier.height(15.dp))
-
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
-
-            contentPadding = PaddingValues(top = 20.dp, bottom = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(15.dp)
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(sampleInformes) { informe ->
-                InfoCard(
-                    date = informe.date,
-                    title = informe.title,
-                    status = informe.status,
-                    borderColor = colorBorde,
-                    statusColor = informe.statusColor,
-                    imagen = informe.imagen,
-                    onMoreInformationClick = onInformePlantaClick
-                )
-            }
-        }
-        BottomNavigationBar()
-    }
-}
-
-@Composable
-fun BottomNavigationBar() {
-    val navigationItems = listOf(
-        "Inicio" to Icons.Default.Home,
-        "Monitoreo" to Icons.Default.Search,
-        "Comunidad" to Icons.Default.Face,
-        "Perfil" to Icons.Default.Person
-    )
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        navigationItems.forEach { (title, icon) ->
-            BottomNavItem(
-                title = title,
-                icon = icon,
-                isSelected = title == "Perfil" // Por ahora hardcodeado
+            BottomBar(
+                selectedRoute = selectedRoute,
+                onNavigate = { newRoute ->
+                    selectedRoute = newRoute
+                }
             )
         }
-    }
-}
-
-@Composable
-fun BottomNavItem(
-    title: String,
-    icon: ImageVector,
-    isSelected: Boolean
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = title,
-            tint = if (isSelected) Color(0xFF829500) else Color.Gray,
-            modifier = Modifier.size(24.dp)
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelSmall,
-            color = if (isSelected) Color(0xFF829500) else Color.Gray
-        )
     }
 }
