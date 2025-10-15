@@ -117,7 +117,7 @@ fun MainScreenHost(navController: NavHostController) {
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(NavItem.Inicio.route) {
-                DashboardScreen() // Or your actual dashboard
+                DashboardScreen(navController = bottomNavController) // Or your actual dashboard
             }
             composable(NavItem.Monitoreo.route) {
                 Text("Placeholder de Monitoreo Screen", modifier = Modifier.fillMaxSize())

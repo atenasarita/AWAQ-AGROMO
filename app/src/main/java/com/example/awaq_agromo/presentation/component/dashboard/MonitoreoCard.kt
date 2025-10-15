@@ -30,11 +30,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.awaq_agromo.R
+import com.example.awaq_agromo.presentation.component.ui.NavItem
 import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
+import com.example.awaq_agromo.presentation.theme.AgromoTheme
 
 @Composable
-fun MonitoreoCard() {
+fun MonitoreoCard(navController: NavController) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -64,11 +67,19 @@ fun MonitoreoCard() {
                     )
                     Spacer(Modifier.height(8.dp))
                     Button(
-                        onClick = { /* TODO: Navigate to monitoring */ },
+                        onClick = {
+                            navController.navigate(NavItem.Monitoreo.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-                    ) {
+                    ){
                         Text("Comenzar", color = PrincipalPrimary, fontWeight = FontWeight.Bold)
                         Spacer(Modifier.width(8.dp))
                         Icon(

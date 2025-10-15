@@ -23,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.awaq_agromo.R
 import com.example.awaq_agromo.presentation.component.ui.BottomBar
 import com.example.awaq_agromo.presentation.component.ui.HeaderSection
@@ -64,7 +66,7 @@ val sampleInformesRecientes: List<InformeData> = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen() {
+fun DashboardScreen(navController: NavController) {
     var selectedRoute by remember { mutableStateOf(NavItem.Inicio.route) }
 
     Scaffold(
@@ -79,7 +81,7 @@ fun DashboardScreen() {
         ) {
             item { HeaderSection("María Pia") }
             item { WeatherCard() }
-            item { MonitoreoCard() }
+            item { MonitoreoCard( navController = navController) }
 
             item { MisCultivos(sampleCropItems) }
             item { QuickInputSection() }
@@ -351,11 +353,3 @@ fun InformeCard(informe: InformeData) {
     }
 }
 
-
-@Preview(showSystemUi = true, backgroundColor = 0xFFF0F4C3) // Set a background color for preview
-@Composable
-fun DashboardScreenPreview() {
-    AgromoTheme {
-        DashboardScreen()
-    }
-}
