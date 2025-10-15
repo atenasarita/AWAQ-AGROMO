@@ -34,7 +34,6 @@ import com.example.awaq_agromo.presentation.component.profile.InfoCard
 // import com.example.awaq_agromo.presentation.screens.perfil.sampleInformes
 import com.example.awaq_agromo.presentation.theme.PrincipalPrimary // Your defined colors
 import com.example.awaq_agromo.presentation.theme.AgromoTheme // Your main theme
-import com.example.awaq_agromo.presentation.theme.Primary900
 
 data class CropItem(val iconRes: Int, val description: String)
 data class InformeData(
@@ -69,12 +68,6 @@ fun DashboardScreen() {
     var selectedRoute by remember { mutableStateOf(NavItem.Inicio.route) }
 
     Scaffold(
-        bottomBar = {
-            BottomBar(
-                selectedRoute = selectedRoute,
-                onNavigate = { newRoute -> selectedRoute = newRoute }
-            )
-        }
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
