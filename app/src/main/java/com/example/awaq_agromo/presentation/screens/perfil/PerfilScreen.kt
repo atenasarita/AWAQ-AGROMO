@@ -58,7 +58,6 @@ fun PerfilScreen() {
     val colorIconos = colorBorde
 
     var selectedRoute by remember { mutableStateOf(NavItem.Inicio.route) }
-
     Box(){
         Column(
             modifier = Modifier

@@ -1,5 +1,6 @@
 package com.example.awaq_agromo.navigation
 
+import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -8,13 +9,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.awaq_agromo.presentation.component.ui.BottomBar
 import com.example.awaq_agromo.presentation.component.ui.NavItem
 import com.example.awaq_agromo.presentation.component.ui.items
+import com.example.awaq_agromo.presentation.screens.camera.Analysis.AnalysisScreen
 import com.example.awaq_agromo.presentation.screens.camera.PhotoScreen
 import com.example.awaq_agromo.presentation.screens.dashboard.DashboardScreen
 import com.example.awaq_agromo.presentation.screens.login.LoginScreen
@@ -78,9 +82,26 @@ fun AppNavigation(navController: NavHostController) {
             MainScreenHost(navController = navController)
         }
 
-       // composable("photo_screen") {
-         //   PhotoScreen()
-       // }
+        composable("photo_screen") {
+            PhotoScreen(navController = navController)
+        }
+
+        composable(
+            route = "analysis/{imageUri}",
+            arguments = listOf(
+                navArgument("imageUri") {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ) { backStackEntry ->
+            val encodedUri = backStackEntry.arguments?.getString("imageUri")
+            val decodedUri = encodedUri?.let { Uri.decode(it) }
+            AnalysisScreen(
+                navController = navController,
+                imageUri = decodedUri
+            )
+        }
     }
 }
 
@@ -117,7 +138,11 @@ fun MainScreenHost(navController: NavHostController) {
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(NavItem.Inicio.route) {
-                DashboardScreen(navController = bottomNavController) // Or your actual dashboard
+                DashboardScreen(
+                    navController = bottomNavController,
+                    onPhotoClick = { navController.navigate("photo_screen") }
+                    ) // Or your actual dashboard
+
             }
             composable(NavItem.Monitoreo.route) {
                 Text("Placeholder de Monitoreo Screen", modifier = Modifier.fillMaxSize())
