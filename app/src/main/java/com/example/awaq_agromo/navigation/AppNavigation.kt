@@ -4,7 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.awaq_agromo.presentation.screens.camera.PhotoScreen
+import com.example.awaq_agromo.presentation.screens.forms.HumedadScreen
+import com.example.awaq_agromo.presentation.screens.forms.MonitoreoScreen
+import com.example.awaq_agromo.presentation.screens.forms.PhScreen
+import com.example.awaq_agromo.presentation.screens.forms.VariedadScreen
 import com.example.awaq_agromo.presentation.screens.login.LoginScreen
 import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_1Screen
 import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_2Screen
@@ -28,7 +31,7 @@ fun AppNavigation(navController: NavHostController) {
             )
         }
         composable("login") {
-            LoginScreen(onDashboardClick = { navController.navigate("perfil") })
+            LoginScreen(onDashboardClick = { navController.navigate("monitoreo") })
         }
         composable("registration") {
             RegistrationScreen(
@@ -55,6 +58,23 @@ fun AppNavigation(navController: NavHostController) {
                 onPerfilClick = {navController.navigate("perfil")}
             )*/
         }
+
+        composable("monitoreo") {
+            MonitoreoScreen( onNext = {navController.navigate("variedad")} )
+        }
+
+        composable("variedad") {
+            VariedadScreen( onNext = {navController.navigate("humedad")} )
+        }
+
+        composable("humedad") {
+            HumedadScreen( onNext = {navController.navigate("pH")} )
+        }
+
+        composable("pH") {
+            PhScreen()
+        }
+
         composable("perfil") {
             PerfilScreen()
         }
