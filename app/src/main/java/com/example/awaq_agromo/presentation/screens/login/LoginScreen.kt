@@ -13,19 +13,30 @@ import androidx.compose.ui.unit.dp
 import com.example.awaq_agromo.presentation.component.ui.AgromoLogo
 import com.example.awaq_agromo.presentation.component.texts.AgromoPasswordField
 import com.example.awaq_agromo.presentation.component.buttons.AgromoPrimaryButton
-import com.example.awaq_agromo.presentation.component.buttons.AgromoSecondaryButton
 import com.example.awaq_agromo.presentation.component.texts.AgromoTextField
 import com.example.awaq_agromo.presentation.theme.Primary50
 import com.example.awaq_agromo.presentation.theme.AgromoTheme
+import com.example.awaq_agromo.presentation.viewmodel.LoginState
+
+import com.example.awaq_agromo.presentation.viewmodel.LoginViewModel
 
 @Composable
-fun LoginScreen(onDashboardClick: () -> Unit) {
+fun LoginScreen(
+    onDashboardClick: () -> Unit,
+    viewModel: LoginViewModel
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val state by viewModel.state.collectAsState()
 
-    val isFormValid =
-        email.isNotBlank() &&
-                password.isNotBlank()
+    val isFormValid = email.isNotBlank() && password.isNotBlank()
+
+    // React to login success
+    LaunchedEffect(state) {
+        if (state is LoginState.Success) {
+            onDashboardClick()
+        }
+    }
 
     AgromoTheme {
         Column(
@@ -59,23 +70,29 @@ fun LoginScreen(onDashboardClick: () -> Unit) {
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                if (isFormValid) {
-                    AgromoPrimaryButton(
-                        text = "INICIAR SESIÓN",
-                        onClick = onDashboardClick
+                when (state) {
+                    is LoginState.Loading -> CircularProgressIndicator()
+                    is LoginState.Error -> Text(
+                        text = (state as LoginState.Error).message,
+                        color = MaterialTheme.colorScheme.error
                     )
-                } else {
-                    AgromoSecondaryButton(
-                        text = "INICIAR SESIÓN",
-                        onClick = {  }
-                    )
+                    else -> {}
                 }
+
+                AgromoPrimaryButton(
+                    text = "INICIAR SESIÓN",
+                    onClick = {
+                        if (isFormValid) viewModel.loginUser(email, password)
+                    }
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text("¿No tienes una cuenta? Crear cuenta", modifier = Modifier.padding(vertical = 8.dp))
+                Text(
+                    "¿No tienes una cuenta? Crear cuenta",
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
             }
-
         }
     }
 }

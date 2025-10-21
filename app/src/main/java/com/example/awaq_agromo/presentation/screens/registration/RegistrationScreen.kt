@@ -17,7 +17,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.awaq_agromo.presentation.component.ui.AgromoLogo
 import com.example.awaq_agromo.presentation.component.texts.AgromoPasswordField
@@ -27,19 +26,22 @@ import com.example.awaq_agromo.presentation.component.buttons.AgromoSecondaryBut
 import com.example.awaq_agromo.presentation.component.texts.AgromoTextField
 import com.example.awaq_agromo.presentation.theme.AgromoTheme
 import com.example.awaq_agromo.presentation.theme.Primary50
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.Color
+import com.example.awaq_agromo.presentation.viewmodel.RegistrationState
+import com.example.awaq_agromo.presentation.viewmodel.RegistrationViewModel
 
 @Composable
 fun RegistrationScreen(
-    onOnboardingClick: () -> Unit = {}
+    viewModel: RegistrationViewModel,
+    onOnboardingClick: () -> Unit
 ) {
-    // 1. Estados de la pantalla
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var privacyChecked by remember { mutableStateOf(false) }
 
-    // Lógica simple de validación (solo verifica que todos los campos requeridos estén llenos)
     val isFormValid = name.isNotBlank() &&
             email.isNotBlank() &&
             password.isNotBlank() &&
@@ -47,16 +49,16 @@ fun RegistrationScreen(
             password == confirmPassword &&
             privacyChecked
 
-    AgromoTheme{
-        // Fondo de la pantalla con el color PrincipalPrimary (Verde Oscuro)
+    val registrationState by viewModel.state.collectAsState()
+
+    AgromoTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Primary50) // Usando el color PrincipalNeutral para un fondo sutil
+                .background(Primary50)
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Contenido de la tarjeta con scroll
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -64,79 +66,60 @@ fun RegistrationScreen(
                     .padding(horizontal = 24.dp, vertical = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // --- Header ---
                 AgromoLogo(modifier = Modifier.padding(bottom = 24.dp))
 
-                // --- Campos de Formulario ---
+                AgromoTextField("Nombre y Apellido", name, onValueChange = { name = it })
                 AgromoTextField(
-                    label = "Nombre y Apellido",
-                    value = name,
-                    onValueChange = { name = it },
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                AgromoTextField(
-                    label = "Correo Electrónico",
-                    value = email,
+                    "Correo Electrónico",
+                    email,
                     onValueChange = { email = it },
-                    keyboardType = KeyboardType.Email,
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    keyboardType = KeyboardType.Email
                 )
-
+                AgromoPasswordField("Contraseña", password, onValueChange = { password = it })
                 AgromoPasswordField(
-                    label = "Contraseña",
-                    value = password,
-                    onValueChange = { password = it },
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
+                    "Confirmar Contraseña",
+                    confirmPassword,
+                    onValueChange = { confirmPassword = it })
 
-                AgromoPasswordField(
-                    label = "Confirmar Contraseña",
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    modifier = Modifier.padding(bottom = 24.dp)
-                )
-
-                // --- Checkbox de Privacidad ---
                 AgromoPrivacyCheckbox(
                     checked = privacyChecked,
                     onCheckedChange = { privacyChecked = it },
-                    onLinkClick = {
-                        // Aquí se implementaría la navegación a la Política de Privacidad
-                        println("Navegando a Política de Privacidad...")
-                    },
-                    modifier = Modifier.padding(bottom = 32.dp)
+                    onLinkClick = { println("Ir a Política de Privacidad") }
                 )
 
+                Spacer(Modifier.height(16.dp))
 
-                // --- Botón de Registro Dinámico ---
                 if (isFormValid) {
                     AgromoPrimaryButton(
                         text = "REGISTRARME",
-                        onClick = onOnboardingClick
+                        onClick = { viewModel.registerUser(name, email, password) }
                     )
                 } else {
-                    // Muestra el botón sutil cuando el formulario NO es válido (Diseño original)
                     AgromoSecondaryButton(
                         text = "REGISTRARME",
-                        onClick = { /* No hacer nada o mostrar error */
-                            println("Registrando usuario...")
-                        }
+                        onClick = { println("Formulario no válido") }
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                when (registrationState) {
+                    is RegistrationState.Loading -> {
+                        Text("Registrando usuario...", color = Color.Gray)
+                    }
 
-                Text("¿Ya tienes una cuenta? Iniciar sesión", modifier = Modifier.padding(vertical = 8.dp))
+                    is RegistrationState.Error -> {
+                        Text(
+                            text = (registrationState as RegistrationState.Error).message,
+                            color = Color.Red
+                        )
+                    }
+
+                    is RegistrationState.Success -> {
+                        onOnboardingClick()
+                    }
+
+                    else -> {}
+                }
             }
-
         }
     }
-}
-
-
-@Preview
-@Composable
-fun RegistrationScreenPreview(){
-    RegistrationScreen()
 }

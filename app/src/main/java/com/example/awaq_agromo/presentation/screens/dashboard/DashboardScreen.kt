@@ -17,24 +17,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.awaq_agromo.R
 import com.example.awaq_agromo.presentation.component.ui.HeaderSection
 import com.example.awaq_agromo.presentation.component.ui.NavItem
 import com.example.awaq_agromo.presentation.component.dashboard.MonitoreoCard
 import com.example.awaq_agromo.presentation.component.dashboard.MisCultivos
-import com.example.awaq_agromo.presentation.component.dashboard.WeatherCard
 import com.example.awaq_agromo.presentation.component.profile.InfoCard
 import com.example.awaq_agromo.presentation.model.InformeData
 import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
-import com.example.awaq_agromo.presentation.theme.AgromoTheme
+import com.example.awaq_agromo.presentation.viewmodel.UserViewModel
 
 data class CropItem(val iconRes: Int, val description: String)
 
@@ -58,10 +55,20 @@ val sampleInformesRecientes: List<InformeData> = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(navController: NavController,onPhotoClick: () -> Unit = {}) {
+fun DashboardScreen(
+    navController: NavController,
+    userViewModel: UserViewModel = hiltViewModel()
+   // weatherViewModel: WeatherViewModel = hiltViewModel()
+) {
+    val user by userViewModel.user.collectAsState()
+    val username = user?.username ?: "Invitado"
+   // val weather by weatherViewModel.weather
 
-    Scaffold(
-    ) { paddingValues ->
+    LaunchedEffect(Unit) {
+        userViewModel.fetchCurrentUser()
+    }
+
+    Scaffold { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -70,13 +77,13 @@ fun DashboardScreen(navController: NavController,onPhotoClick: () -> Unit = {}) 
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(35.dp)
         ) {
-            item { HeaderSection("María Pia") }
-            item { WeatherCard() }
-            item { MonitoreoCard( navController = navController) }
-
+            item { HeaderSection(userName = username) }
+         //   item { WeatherCard(weather = weather) } // Pass weather here
+            item { MonitoreoCard(navController = navController) }
             item { MisCultivos(sampleCropItems) }
             item { QuickInputSection() }
-            item { CropPhotosSection(onPhotoClick) }
+            item { CropPhotosSection() }
+
 
             item {
                 Row(
@@ -200,7 +207,7 @@ fun QuickInputCard(label: String, icon: ImageVector, onClick: () -> Unit) {
 }
 
 @Composable
-fun CropPhotosSection(onPhotoClick: () -> Unit = {}) {
+fun CropPhotosSection() {
     Column {
         Text(
             text = "Fotografía de tus cultivos",
@@ -223,7 +230,7 @@ fun CropPhotosSection(onPhotoClick: () -> Unit = {}) {
         }
         Spacer(Modifier.height(16.dp))
         Button(
-            onClick = onPhotoClick,
+            onClick = { /* TODO: Take photo */ },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = PrincipalPrimary),
@@ -271,12 +278,3 @@ fun PhotoInstructionCard(number: String, instruction: String, imageRes: Int) {
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun DashboardScreenPreview() {
-    AgromoTheme {
-        val navController = rememberNavController()
-        DashboardScreen(navController = navController)
-    }
-}

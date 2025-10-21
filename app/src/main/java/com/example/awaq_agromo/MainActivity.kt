@@ -4,18 +4,25 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
+import com.example.awaq_agromo.data.local.DataStoreManager
 import com.example.awaq_agromo.navigation.AppNavigation
-import com.example.awaq_agromo.presentation.theme.AgromoTheme
+import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var dataStoreManager: DataStoreManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AgromoTheme {
-                val navController = rememberNavController()
-
-                AppNavigation(navController = navController)
-            }
+            val navController = rememberNavController()
+            AppNavigation(
+                navController = navController,
+                dataStoreManager = dataStoreManager
+            )
         }
     }
 }

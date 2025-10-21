@@ -1,6 +1,5 @@
 package com.example.awaq_agromo.presentation.screens.perfil
 
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,9 +17,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,19 +31,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.awaq_agromo.R
-import com.example.awaq_agromo.presentation.component.ui.NavItem
 import com.example.awaq_agromo.presentation.component.profile.InfoCard
 import com.example.awaq_agromo.presentation.component.profile.UserCard
 import com.example.awaq_agromo.presentation.component.texts.TitleText
 import com.example.awaq_agromo.presentation.model.InformeData
 import com.example.awaq_agromo.presentation.screens.dashboard.sampleInformesRecientes
+import com.example.awaq_agromo.presentation.viewmodel.UserViewModel
 
 val sampleInformes: List<InformeData> = listOf(
-    InformeData("12 sept", "Informe integral", "Atender",  Color.Red, R.drawable.image_ph, "Calabaza"),
+    InformeData(
+        "12 sept",
+        "Informe integral",
+        "Atender",
+        Color.Red,
+        R.drawable.image_ph,
+        "Calabaza"
+    ),
     InformeData("15 sept", "Revisión hortalizas", "En curso", Color.Blue, R.drawable.image_ph, "Pimiento"),
     InformeData("20 sept", "Detección de plaga", "Urgente", Color.Red, R.drawable.planta_de_pimientos, "Calabaza"),
     InformeData("25 sept", "Abono orgánico", "Pendiente", Color.Gray, R.drawable.image_ph, "Berenjena"),
@@ -50,15 +60,18 @@ val sampleInformes: List<InformeData> = listOf(
     InformeData("05 oct", "Fertilización", "Pendiente", Color.Gray, R.drawable.image_ph, "Tomate"),
 )
 
-@Preview(showSystemUi = true)
 @Composable
-fun PerfilScreen() {
+fun PerfilScreen(
+    navController: NavController,
+    userViewModel: UserViewModel = hiltViewModel()
+) {
     val colorBorde = Color(0xFF344E18)
     val colorTexto = colorBorde
     val colorIconos = colorBorde
 
-    var selectedRoute by remember { mutableStateOf(NavItem.Inicio.route) }
-    Box(){
+    var settingsExpanded by remember { mutableStateOf(false) } // Controls popup
+
+    Box {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -73,7 +86,7 @@ fun PerfilScreen() {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(
-                    onClick = {} // No se que se deberia de poder hacerse...
+                    onClick = { /* Handle back navigation */ }
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBackIosNew,
@@ -91,8 +104,9 @@ fun PerfilScreen() {
 
                 Spacer(modifier = Modifier.weight(1f))
 
+                // Settings Icon with dropdown menu
                 IconButton(
-                    onClick = {}
+                    onClick = { settingsExpanded = true }
                 ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
@@ -102,7 +116,25 @@ fun PerfilScreen() {
                     )
                 }
 
+                DropdownMenu(
+                    expanded = settingsExpanded,
+                    onDismissRequest = { settingsExpanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Log Out") },
+                        onClick = {
+                            settingsExpanded = false
+                            userViewModel.logout() // clear user session
+                            navController.navigate("welcome") {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    )
+                }
             }
+
             Spacer(modifier = Modifier.height(15.dp))
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
             Spacer(modifier = Modifier.height(30.dp))
@@ -110,7 +142,7 @@ fun PerfilScreen() {
             UserCard(
                 textColor = colorTexto,
                 borderColor = colorBorde,
-                nombreUsuario = "Nombre de Usuario",
+                nombreUsuario = "Nombre de Usuario", // Replace with actual username
                 ubicacion = "Lugar del Usuario",
                 imagenUsuario = R.drawable.chiili
             )
@@ -144,7 +176,7 @@ fun PerfilScreen() {
                     InfoCard(
                         informe = informe,
                         onMoreInformationClick = {
-                             // TODO
+                            // TODO
                         }
                     )
                 }
