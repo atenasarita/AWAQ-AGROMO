@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.ui)
     implementation(libs.material3)
     implementation(libs.androidx.room.common.jvm)
+    implementation(libs.androidx.foundation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -64,4 +65,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation("androidx.compose.foundation:foundation")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("androidx.compose.foundation:foundation")
+
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 }
