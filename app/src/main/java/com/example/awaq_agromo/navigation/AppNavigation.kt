@@ -21,6 +21,7 @@ import com.example.awaq_agromo.presentation.component.ui.items
 import com.example.awaq_agromo.presentation.screens.camera.Analysis.AnalysisScreen
 import com.example.awaq_agromo.presentation.screens.camera.PhotoScreen
 import com.example.awaq_agromo.presentation.screens.dashboard.DashboardScreen
+import com.example.awaq_agromo.presentation.screens.forms.MonitoreoScreen
 import com.example.awaq_agromo.presentation.screens.login.LoginScreen
 import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_1Screen
 import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_2Screen
@@ -145,7 +146,7 @@ fun MainScreenHost(navController: NavHostController) {
 
             }
             composable(NavItem.Monitoreo.route) {
-                Text("Placeholder de Monitoreo Screen", modifier = Modifier.fillMaxSize())
+                MonitoreoScreen()
             }
             composable(NavItem.Comunidad.route) {
                 Text("Placeholder de Comunidad Screen", modifier = Modifier.fillMaxSize())
