@@ -21,6 +21,7 @@ import com.example.awaq_agromo.presentation.component.ui.items
 import com.example.awaq_agromo.presentation.screens.camera.Analysis.AnalysisScreen
 import com.example.awaq_agromo.presentation.screens.camera.PhotoScreen
 import com.example.awaq_agromo.presentation.screens.dashboard.DashboardScreen
+import com.example.awaq_agromo.presentation.screens.forms.MalezaScreen
 import com.example.awaq_agromo.presentation.screens.login.LoginScreen
 import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_1Screen
 import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_2Screen
@@ -83,7 +84,40 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable("photo_screen") {
-            PhotoScreen(navController = navController)
+            PhotoScreen(
+                navController = navController,
+                origin = "default"
+            )
+        }
+
+        composable("malezas") {
+            MalezaScreen(
+                navController = navController,
+                onPhotoClick = {
+                    navController.navigate("photo_screen/formulario")
+                },
+                onDashboardClick = {
+                    navController.navigate("main_host") {
+                        popUpTo("welcome") { inclusive = true }
+                    }
+                },
+                onBackPressed = { navController.popBackStack() }
+            )
+        }
+
+        // RUTAS SEPARADAS PARA LA CÁMARA SEGÚN EL ORIGEN
+        composable("photo_screen/main_host") {
+            PhotoScreen(
+                navController = navController,
+                origin = "dashboard"
+            )
+        }
+
+        composable("photo_screen/formulario") {
+            PhotoScreen(
+                navController = navController,
+                origin = "formulario"
+            )
         }
 
         composable(
@@ -140,8 +174,8 @@ fun MainScreenHost(navController: NavHostController) {
             composable(NavItem.Inicio.route) {
                 DashboardScreen(
                     navController = bottomNavController,
-                    onPhotoClick = { navController.navigate("photo_screen") }
-                    ) // Or your actual dashboard
+                    onPhotoClick = { navController.navigate("malezas") }
+                    )
 
             }
             composable(NavItem.Monitoreo.route) {

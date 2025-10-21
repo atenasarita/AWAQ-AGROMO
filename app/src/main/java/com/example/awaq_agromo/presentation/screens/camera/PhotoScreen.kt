@@ -28,7 +28,10 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun PhotoScreen(navController: NavController) {
+fun PhotoScreen(
+    navController: NavController,
+    origin: String? = null // Parámetro para saber desde dónde se llamó
+) {
     val context = LocalContext.current
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -48,6 +51,32 @@ fun PhotoScreen(navController: NavController) {
         }
     }
 
+    // Función para manejar la navegación después de tomar la foto
+    fun handlePhotoSuccess(uri: Uri) {
+        when (origin) {
+            "dashboard" -> {
+                // Navegar a análisis desde dashboard
+                val uriString = uri.toString()
+                val encodedUri = Uri.encode(uriString)
+                navController.navigate("analysis/$encodedUri") {
+                    popUpTo("photo_screen") { inclusive = true }
+                }
+            }
+            "formulario" -> {
+                // Regresar al formulario con la foto
+                navController.previousBackStackEntry?.savedStateHandle?.set(
+                    "selectedPhotoUri",
+                    uri.toString()
+                )
+                navController.popBackStack()
+            }
+            else -> {
+                // Comportamiento por defecto
+                navController.popBackStack()
+            }
+        }
+    }
+
     // Camera launcher
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
@@ -57,20 +86,15 @@ fun PhotoScreen(navController: NavController) {
         if (success && photoUri != null && photoFile?.exists() == true) {
             // Foto capturada exitosamente
             try {
-                // Codificar el URI como string para pasarlo de forma segura
-                val uriString = photoUri.toString()
-                val encodedUri = Uri.encode(uriString)
-                navController.navigate("analysis/$encodedUri") {
-                    popUpTo("photo_screen") { inclusive = true }
-                }
+                handlePhotoSuccess(photoUri)
             } catch (e: Exception) {
                 e.printStackTrace()
                 errorMessage = "Error al navegar: ${e.message}"
-                photoFile?.delete()
+                photoFile.delete()
             }
         } else {
             // Usuario canceló o hubo error
-            photoFile?.delete() // Limpiar archivo si existe
+            photoFile?.delete()
             navController.popBackStack()
         }
     }
@@ -89,7 +113,6 @@ fun PhotoScreen(navController: NavController) {
         } else {
             isLoading = false
             errorMessage = "Permiso de cámara denegado"
-            // Volver después de mostrar el error brevemente
             navController.popBackStack()
         }
     }
@@ -104,7 +127,7 @@ fun PhotoScreen(navController: NavController) {
             return@LaunchedEffect
         }
 
-        delay(300) // Pequeño delay para transición suave
+        delay(300)
 
         val hasPermission = ContextCompat.checkSelfPermission(
             context,
@@ -127,16 +150,15 @@ fun PhotoScreen(navController: NavController) {
     DisposableEffect(Unit) {
         onDispose {
             if (photoFile?.exists() == true) {
-                // Solo eliminar si no navegamos a análisis
                 val currentRoute = navController.currentBackStackEntry?.destination?.route
-                if (currentRoute != "analysis/{photoUri}") {
+                if (!currentRoute.toString().contains("analysis")) {
                     photoFile.delete()
                 }
             }
         }
     }
 
-    // UI
+    // UI (igual que antes)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -192,7 +214,7 @@ fun PhotoScreen(navController: NavController) {
     }
 }
 
-// Función auxiliar para crear el archivo de imagen
+// Función auxiliar para crear el archivo de imagen (igual que antes)
 private fun createImageFile(context: Context): File? {
     return try {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())

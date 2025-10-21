@@ -11,20 +11,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.awaq_agromo.R
 import com.example.awaq_agromo.presentation.component.ui.HeaderSection
 import com.example.awaq_agromo.presentation.component.ui.NavItem
@@ -34,7 +30,10 @@ import com.example.awaq_agromo.presentation.component.dashboard.WeatherCard
 import com.example.awaq_agromo.presentation.component.profile.InfoCard
 import com.example.awaq_agromo.presentation.model.InformeData
 import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
-import com.example.awaq_agromo.presentation.theme.AgromoTheme
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 
 data class CropItem(val iconRes: Int, val description: String)
 
@@ -123,8 +122,6 @@ fun DashboardScreen(navController: NavController,onPhotoClick: () -> Unit = {}) 
         }
     }
 }
-
-
 
 @Composable
 fun QuickInputSection() {
@@ -268,15 +265,5 @@ fun PhotoInstructionCard(number: String, instruction: String, imageRes: Int) {
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun DashboardScreenPreview() {
-    AgromoTheme {
-        val navController = rememberNavController()
-        DashboardScreen(navController = navController)
     }
 }
