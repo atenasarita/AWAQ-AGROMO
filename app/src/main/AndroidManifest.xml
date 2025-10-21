@@ -7,7 +7,20 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
 
+    <!-- Permisos necesarios para pedir la ubicación actual -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <!-- Opcionales (recomendados) -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <uses-feature android:name="android.hardware.camera" android:required="true"/>
+
+    <!-- Declarar como "no requerido" para no excluir dispositivos sin GPS -->
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
