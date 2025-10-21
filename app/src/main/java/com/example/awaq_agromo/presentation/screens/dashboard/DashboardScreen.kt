@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.example.awaq_agromo.presentation.theme.AgromoTheme
 
 data class CropItem(val iconRes: Int, val description: String)
 
@@ -59,65 +60,67 @@ val sampleInformesRecientes: List<InformeData> = listOf(
 @Composable
 fun DashboardScreen(navController: NavController,onPhotoClick: () -> Unit = {}) {
 
-    Scaffold(
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(35.dp)
-        ) {
-            item { HeaderSection("María Pia") }
-            item { WeatherCard() }
-            item { MonitoreoCard( navController = navController) }
+    AgromoTheme {
+        Scaffold(
+        ) { paddingValues ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .background(MaterialTheme.colorScheme.background),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(35.dp)
+            ) {
+                item { HeaderSection("María Pia") }
+                item { WeatherCard() }
+                item { MonitoreoCard(navController = navController) }
 
-            item { MisCultivos(sampleCropItems) }
-            item { QuickInputSection() }
-            item { CropPhotosSection(onPhotoClick) }
+                item { MisCultivos(sampleCropItems) }
+                item { QuickInputSection() }
+                item { CropPhotosSection(onPhotoClick) }
 
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Informes Recientes",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    TextButton(
-                        onClick = {
-                            navController.navigate(NavItem.Perfil.route) {
-                                popUpTo(NavItem.Inicio.route) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Ver todo",
-                            color = PrincipalPrimary,
+                            text = "Informes Recientes",
+                            style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.labelLarge
+                            color = MaterialTheme.colorScheme.onSurface
                         )
+                        TextButton(
+                            onClick = {
+                                navController.navigate(NavItem.Perfil.route) {
+                                    popUpTo(NavItem.Inicio.route) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        ) {
+                            Text(
+                                text = "Ver todo",
+                                color = PrincipalPrimary,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
                     }
                 }
-            }
 
-            items(sampleInformesRecientes) { informe ->
-                InfoCard(
-                    informe = informe,
-                    onMoreInformationClick = {
-                        // Optional: navigate to detailed report
-                    }
-                )
+                items(sampleInformesRecientes) { informe ->
+                    InfoCard(
+                        informe = informe,
+                        onMoreInformationClick = {
+                            // Optional: navigate to detailed report
+                        }
+                    )
+                }
             }
         }
     }

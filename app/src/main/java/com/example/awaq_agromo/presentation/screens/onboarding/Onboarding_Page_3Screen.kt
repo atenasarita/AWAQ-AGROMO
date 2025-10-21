@@ -25,49 +25,52 @@ import com.example.awaq_agromo.presentation.component.ui.ProgressBar
 import com.example.awaq_agromo.presentation.component.texts.SubtitleText
 import com.example.awaq_agromo.presentation.component.texts.TitleText
 import com.example.awaq_agromo.presentation.component.ui.CustomProgressBar
+import com.example.awaq_agromo.presentation.theme.AgromoTheme
 import org.intellij.lang.annotations.JdkConstants
 
 @Preview(showSystemUi = true)
 @Composable
 fun Onboarding_Page_3Screen(
     onDashboardClick: () -> Unit = {}
-){
+) {
 
     var progress by remember { mutableFloatStateOf(1f) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+    AgromoTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
 
-        Box() {
-            ProgressBar(progress = 0f)
-            CustomProgressBar(progress = progress)
+            Box() {
+                ProgressBar(progress = 0f)
+                CustomProgressBar(progress = progress)
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            TitleText(
+                text = "Seleccione sus cultivos",
+                fontSize = 25.sp,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            SubtitleText(
+                text = "Personalice tu experiencia añadiendo los cultivos que tiene en su granja",
+                textAlign = androidx.compose.ui.text.style.TextAlign.Start
+            )
+
+            Spacer(modifier = Modifier.height(500.dp))
+
+            PrimaryButton(
+                text = "Completar",
+                onClick = onDashboardClick
+            )
         }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        TitleText(
-            text = "Seleccione sus cultivos",
-            fontSize = 25.sp,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        SubtitleText(
-            text = "Personalice tu experiencia añadiendo los cultivos que tiene en su granja",
-            textAlign = androidx.compose.ui.text.style.TextAlign.Start
-        )
-
-        Spacer(modifier = Modifier.height(500.dp))
-
-        PrimaryButton(
-            text = "Completar",
-            onClick = onDashboardClick
-        )
     }
 }

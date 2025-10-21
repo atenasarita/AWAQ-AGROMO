@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.example.awaq_agromo.R
 import com.example.awaq_agromo.data.local.store.PhLocalStore
 import com.example.awaq_agromo.presentation.component.ui.HorizontalDotBar
+import com.example.awaq_agromo.presentation.theme.AgromoTheme
 import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
 import kotlinx.coroutines.launch
 
@@ -54,138 +55,154 @@ fun PhScreen(
         if (ok) scope.launch { PhLocalStore.savePhValue(context, v) }
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize().background(bgScreen),
-        color = bgScreen
-    ) {
-        Column(Modifier.fillMaxSize()) {
+    AgromoTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize().background(bgScreen),
+            color = bgScreen
+        ) {
+            Column(Modifier.fillMaxSize()) {
 
-            Spacer(Modifier.height(16.dp))
-            Column(Modifier.padding(horizontal = 16.dp)) {
-                Text(
-                    "Medición de pH del suelo",
-                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
-                    color = textPrimary
+                Spacer(Modifier.height(16.dp))
+                Column(Modifier.padding(horizontal = 16.dp)) {
+                    Text(
+                        "Medición de pH del suelo",
+                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
+                        color = textPrimary
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        "Complete los datos que disponga; el resto puede omitirlo.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = textSecondary
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    HorizontalDotBar(n = 11, k = 4, modifier = Modifier.fillMaxWidth())
+                }
+
+                Spacer(Modifier.height(16.dp))
+                Column(Modifier.padding(horizontal = 16.dp)) {
+                    Text(
+                        "Indique el nivel de pH del suelo y el método usado.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = textSecondary
+                    )
+                }
+
+                // Imagen suelo
+                Spacer(Modifier.height(12.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.suelo),
+                    contentDescription = "Medición de pH del suelo",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .padding(horizontal = 36.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                    contentScale = ContentScale.Fit
                 )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    "Complete los datos que disponga; el resto puede omitirlo.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = textSecondary
-                )
-                Spacer(Modifier.height(10.dp))
-                HorizontalDotBar(n = 11, k = 4, modifier = Modifier.fillMaxWidth())
+
+                // Campo de pH
+                Spacer(Modifier.height(16.dp))
+                Column(Modifier.padding(horizontal = 16.dp)) {
+                    Text(
+                        "Nivel de pH",
+                        color = textSecondary,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    OutlinedTextField(
+                        value = phValue,
+                        onValueChange = { v ->
+                            if (v.isEmpty() || v.matches(Regex("""^\d{0,2}(\.\d{0,2})?$"""))) {
+                                phValue = v
+                                validateAndSavePh(v)
+                            }
+                        },
+                        placeholder = { Text("Número de (0–14)") },
+                        isError = phError != null,
+                        supportingText = {
+                            if (phError != null) Text(
+                                phError!!,
+                                color = Color(0xFF8B0000)
+                            )
+                        },
+                        singleLine = true,
+                        shape = RoundedCornerShape(14.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = accent,
+                            unfocusedBorderColor = borderSoft,
+                            cursorColor = accent
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                // Instructivos
+                Spacer(Modifier.height(18.dp))
+                Column(Modifier.padding(horizontal = 16.dp)) {
+                    Text(
+                        "Instructivos",
+                        color = textSecondary,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Spacer(Modifier.height(8.dp))
+
+                    GuideItemWithImage(
+                        title = "Medidor Digital",
+                        subtitle = "Paso a paso para medición precisa",
+                        imageRes = R.drawable.digital,
+                        onClick = {
+                            method = "Digital"
+                            scope.launch { PhLocalStore.savePhMethod(context, method) }
+                        },
+                        accent = accent
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    GuideItemWithImage(
+                        title = "Cinta Reactiva",
+                        subtitle = "Cómo usar tiras de pH correctamente",
+                        imageRes = R.drawable.reactiva,
+                        onClick = {
+                            method = "Cinta"
+                            scope.launch { PhLocalStore.savePhMethod(context, method) }
+                        },
+                        accent = accent
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    GuideItemWithImage(
+                        title = "Medición Manual",
+                        subtitle = "Mezcla, reposo y lectura visual",
+                        imageRes = R.drawable.manual,
+                        onClick = {
+                            method = "Manual"
+                            scope.launch { PhLocalStore.savePhMethod(context, method) }
+                        },
+                        accent = accent
+                    )
+                }
+
+                Spacer(Modifier.height(18.dp))
+                Button(
+                    onClick = { onNext?.invoke() },
+                    enabled = (phValue.toFloatOrNull()
+                        ?.let { it in 0f..14f } == true) || method.isNotBlank(),
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = accent,
+                        disabledContainerColor = accent.copy(alpha = 0.4f)
+                    )
+                ) { Text("Siguiente") }
+
+                Spacer(Modifier.height(12.dp))
             }
-
-            Spacer(Modifier.height(16.dp))
-            Column(Modifier.padding(horizontal = 16.dp)) {
-                Text(
-                    "Indique el nivel de pH del suelo y el método usado.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = textSecondary
-                )
-            }
-
-            // Imagen suelo
-            Spacer(Modifier.height(12.dp))
-            Image(
-                painter = painterResource(id = R.drawable.suelo),
-                contentDescription = "Medición de pH del suelo",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp)
-                    .padding(horizontal = 36.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.Fit
-            )
-
-            // Campo de pH
-            Spacer(Modifier.height(16.dp))
-            Column(Modifier.padding(horizontal = 16.dp)) {
-                Text("Nivel de pH", color = textSecondary, style = MaterialTheme.typography.bodySmall)
-                Spacer(Modifier.height(6.dp))
-                OutlinedTextField(
-                    value = phValue,
-                    onValueChange = { v ->
-                        if (v.isEmpty() || v.matches(Regex("""^\d{0,2}(\.\d{0,2})?$"""))) {
-                            phValue = v
-                            validateAndSavePh(v)
-                        }
-                    },
-                    placeholder = { Text("Número de (0–14)") },
-                    isError = phError != null,
-                    supportingText = { if (phError != null) Text(phError!!, color = Color(0xFF8B0000)) },
-                    singleLine = true,
-                    shape = RoundedCornerShape(14.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = accent,
-                        unfocusedBorderColor = borderSoft,
-                        cursorColor = accent
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            // Instructivos
-            Spacer(Modifier.height(18.dp))
-            Column(Modifier.padding(horizontal = 16.dp)) {
-                Text("Instructivos", color = textSecondary, style = MaterialTheme.typography.bodySmall)
-                Spacer(Modifier.height(8.dp))
-
-                GuideItemWithImage(
-                    title = "Medidor Digital",
-                    subtitle = "Paso a paso para medición precisa",
-                    imageRes = R.drawable.digital,
-                    onClick = {
-                        method = "Digital"
-                        scope.launch { PhLocalStore.savePhMethod(context, method) }
-                    },
-                    accent = accent
-                )
-
-                Spacer(Modifier.height(8.dp))
-
-                GuideItemWithImage(
-                    title = "Cinta Reactiva",
-                    subtitle = "Cómo usar tiras de pH correctamente",
-                    imageRes = R.drawable.reactiva,
-                    onClick = {
-                        method = "Cinta"
-                        scope.launch { PhLocalStore.savePhMethod(context, method) }
-                    },
-                    accent = accent
-                )
-
-                Spacer(Modifier.height(8.dp))
-
-                GuideItemWithImage(
-                    title = "Medición Manual",
-                    subtitle = "Mezcla, reposo y lectura visual",
-                    imageRes = R.drawable.manual,
-                    onClick = {
-                        method = "Manual"
-                        scope.launch { PhLocalStore.savePhMethod(context, method) }
-                    },
-                    accent = accent
-                )
-            }
-
-            Spacer(Modifier.height(18.dp))
-            Button(
-                onClick = { onNext?.invoke() },
-                enabled = (phValue.toFloatOrNull()?.let { it in 0f..14f } == true) || method.isNotBlank(),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 10.dp)
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = accent,
-                    disabledContainerColor = accent.copy(alpha = 0.4f)
-                )
-            ) { Text("Siguiente") }
-
-            Spacer(Modifier.height(12.dp))
         }
     }
 }

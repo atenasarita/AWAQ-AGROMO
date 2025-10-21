@@ -37,6 +37,7 @@ import com.example.awaq_agromo.R
 import com.example.awaq_agromo.data.local.store.WeatherLocalStore
 import com.example.awaq_agromo.data.local.store.WeatherSnapshot
 import com.example.awaq_agromo.presentation.component.ui.HorizontalDotBar
+import com.example.awaq_agromo.presentation.theme.AgromoTheme
 import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -129,210 +130,213 @@ fun MonitoreoScreen(
     val borderSoft = Color(0xFFBBD8A8)
     val accent = PrincipalPrimary
 
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(bgScreen),
-        color = bgScreen
-    ) {
-        Column(
+    AgromoTheme {
+        Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .background(bgScreen),
+            color = bgScreen
         ) {
-            // HEADER
-            Spacer(Modifier.height(18.dp))
-            Column(Modifier.padding(horizontal = 20.dp)) {
-                Text(
-                    text = "Registro del Cultivo",
-                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
-                    color = textPrimary
-                )
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    text = "Complete los datos que disponga; el resto puede omitirlo.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = textSecondary
-                )
-                Spacer(Modifier.height(12.dp))
-                HorizontalDotBar(
-                    n = 8, k = 1,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 6.dp, bottom = 18.dp)
-                )
-                Text(
-                    text = "Indique la ubicación de su cultivo",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                    color = textPrimary
-                )
-            }
-
-            // CARD principal
-            Spacer(Modifier.height(12.dp))
-            CardBox(
-                borderSoft = borderSoft
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ubi),
-                    contentDescription = "Ubicación",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(220.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(bgScreen),
-                    contentScale = ContentScale.Fit
-                )
-
-                Spacer(Modifier.height(14.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Outlined.LocationOn,
-                        contentDescription = null,
-                        tint = accent
-                    )
-                    Spacer(Modifier.width(8.dp))
+                // HEADER
+                Spacer(Modifier.height(18.dp))
+                Column(Modifier.padding(horizontal = 20.dp)) {
                     Text(
-                        text = place ?: "Ubicación no establecida",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                        text = "Registro del Cultivo",
+                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
+                        color = textPrimary
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        text = "Complete los datos que disponga; el resto puede omitirlo.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = textSecondary
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    HorizontalDotBar(
+                        n = 8, k = 1,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 6.dp, bottom = 18.dp)
+                    )
+                    Text(
+                        text = "Indique la ubicación de su cultivo",
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
                         color = textPrimary
                     )
                 }
 
-                // Muestra las métricas si ya hay snapshot guardado
-                AnimatedVisibility(visible = snapshot != null) {
-                    Spacer(Modifier.height(12.dp))
-                    snapshot?.let { s ->
-                        WeatherStatsRow(
-                            humidity = s.humidityPct,
-                            windKmh = s.windKmh,
-                            rainPct = s.rainPct,
-                            tempC = s.tempC
+                // CARD principal
+                Spacer(Modifier.height(12.dp))
+                CardBox(
+                    borderSoft = borderSoft
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ubi),
+                        contentDescription = "Ubicación",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(220.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(bgScreen),
+                        contentScale = ContentScale.Fit
+                    )
+
+                    Spacer(Modifier.height(14.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Outlined.LocationOn,
+                            contentDescription = null,
+                            tint = accent
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = place ?: "Ubicación no establecida",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = textPrimary
                         )
                     }
-                }
 
-                AnimatedVisibility(visible = errorMsg != null) {
+                    // Muestra las métricas si ya hay snapshot guardado
+                    AnimatedVisibility(visible = snapshot != null) {
+                        Spacer(Modifier.height(12.dp))
+                        snapshot?.let { s ->
+                            WeatherStatsRow(
+                                humidity = s.humidityPct,
+                                windKmh = s.windKmh,
+                                rainPct = s.rainPct,
+                                tempC = s.tempC
+                            )
+                        }
+                    }
+
+                    AnimatedVisibility(visible = errorMsg != null) {
+                        Text(
+                            text = errorMsg ?: "",
+                            color = Color(0xFF8B0000),
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+
+                    Spacer(Modifier.height(12.dp))
+
+                    OutlinedButton(
+                        onClick = {
+                            if (!hasLocationPermission(context)) {
+                                isRequesting = true
+                                permissionLauncher.launch(
+                                    arrayOf(
+                                        Manifest.permission.ACCESS_FINE_LOCATION,
+                                        Manifest.permission.ACCESS_COARSE_LOCATION
+                                    )
+                                )
+                                return@OutlinedButton
+                            }
+                            requestCurrentLocation(
+                                fused = fused,
+                                onStart = { isRequesting = true },
+                                onResult = { lat, lon ->
+                                    scope.launch {
+                                        val pretty = withContext(Dispatchers.IO) {
+                                            reverseGeocodeCityState(lat, lon, context)
+                                        }
+                                        val label =
+                                            pretty ?: "${"%.5f".format(lat)}, ${"%.5f".format(lon)}"
+                                        place = label
+                                        errorMsg = null
+
+                                        WeatherLocalStore.saveSnapshot(
+                                            context,
+                                            WeatherSnapshot(
+                                                locationLabel = label,
+                                                humidityPct = 48,
+                                                windKmh = 10,
+                                                rainPct = 22,
+                                                tempC = 23,
+                                                timestamp = System.currentTimeMillis()
+                                            )
+                                        )
+                                        isRequesting = false
+                                    }
+                                },
+                                onError = { msg ->
+                                    errorMsg = msg
+                                    isRequesting = false
+                                }
+                            )
+                        },
+                        shape = RoundedCornerShape(18.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = accent),
+                        border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp)
+                    ) {
+                        if (isRequesting) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                strokeWidth = 2.dp,
+                                color = accent
+                            )
+                            Spacer(Modifier.width(12.dp))
+                            Text("Obteniendo ubicación…")
+                        } else {
+                            Text("Usar mi ubicación actual")
+                        }
+                    }
+
+                    Spacer(Modifier.height(10.dp))
+
                     Text(
-                        text = errorMsg ?: "",
-                        color = Color(0xFF8B0000),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 8.dp)
+                        text = "O complete manualmente",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        color = textSecondary
+                    )
+
+                    Spacer(Modifier.height(10.dp))
+
+                    OutlinedTextField(
+                        value = manualCity,
+                        onValueChange = { manualCity = it },
+                        placeholder = { Text("Busca por ciudad") },
+                        leadingIcon = {
+                            Icon(imageVector = Icons.Outlined.Search, contentDescription = "Buscar")
+                        },
+                        singleLine = true,
+                        shape = RoundedCornerShape(16.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = accent,
+                            unfocusedBorderColor = borderSoft,
+                            cursorColor = accent,
+                            focusedLabelColor = accent
+                        ),
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
 
-                Spacer(Modifier.height(12.dp))
-
-                OutlinedButton(
-                    onClick = {
-                        if (!hasLocationPermission(context)) {
-                            isRequesting = true
-                            permissionLauncher.launch(
-                                arrayOf(
-                                    Manifest.permission.ACCESS_FINE_LOCATION,
-                                    Manifest.permission.ACCESS_COARSE_LOCATION
-                                )
-                            )
-                            return@OutlinedButton
-                        }
-                        requestCurrentLocation(
-                            fused = fused,
-                            onStart = { isRequesting = true },
-                            onResult = { lat, lon ->
-                                scope.launch {
-                                    val pretty = withContext(Dispatchers.IO) {
-                                        reverseGeocodeCityState(lat, lon, context)
-                                    }
-                                    val label = pretty ?: "${"%.5f".format(lat)}, ${"%.5f".format(lon)}"
-                                    place = label
-                                    errorMsg = null
-
-                                    WeatherLocalStore.saveSnapshot(
-                                        context,
-                                        WeatherSnapshot(
-                                            locationLabel = label,
-                                            humidityPct = 48,
-                                            windKmh = 10,
-                                            rainPct = 22,
-                                            tempC = 23,
-                                            timestamp = System.currentTimeMillis()
-                                        )
-                                    )
-                                    isRequesting = false
-                                }
-                            },
-                            onError = { msg ->
-                                errorMsg = msg
-                                isRequesting = false
-                            }
-                        )
-                    },
-                    shape = RoundedCornerShape(18.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = accent),
-                    border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
+                // FOOTER CTA
+                Spacer(Modifier.height(24.dp))
+                Button(
+                    onClick = { onNext?.invoke() },
                     modifier = Modifier
+                        .padding(horizontal = 16.dp)
                         .fillMaxWidth()
-                        .height(52.dp)
-                ) {
-                    if (isRequesting) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(18.dp),
-                            strokeWidth = 2.dp,
-                            color = accent
-                        )
-                        Spacer(Modifier.width(12.dp))
-                        Text("Obteniendo ubicación…")
-                    } else {
-                        Text("Usar mi ubicación actual")
-                    }
-                }
-
-                Spacer(Modifier.height(10.dp))
-
-                Text(
-                    text = "O complete manualmente",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    color = textSecondary
-                )
-
-                Spacer(Modifier.height(10.dp))
-
-                OutlinedTextField(
-                    value = manualCity,
-                    onValueChange = { manualCity = it },
-                    placeholder = { Text("Busca por ciudad") },
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Outlined.Search, contentDescription = "Buscar")
-                    },
-                    singleLine = true,
+                        .height(54.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = accent,
-                        unfocusedBorderColor = borderSoft,
-                        cursorColor = accent,
-                        focusedLabelColor = accent
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
+                    colors = ButtonDefaults.buttonColors(containerColor = accent)
+                ) {
+                    Text("Continuar")
+                }
+                Spacer(Modifier.height(24.dp))
             }
-
-            // FOOTER CTA
-            Spacer(Modifier.height(24.dp))
-            Button(
-                onClick = { onNext?.invoke() },
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth()
-                    .height(54.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = accent)
-            ) {
-                Text("Continuar")
-            }
-            Spacer(Modifier.height(24.dp))
         }
     }
 }

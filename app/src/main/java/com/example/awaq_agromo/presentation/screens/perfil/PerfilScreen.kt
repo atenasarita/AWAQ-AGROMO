@@ -39,6 +39,7 @@ import com.example.awaq_agromo.presentation.component.profile.UserCard
 import com.example.awaq_agromo.presentation.component.texts.TitleText
 import com.example.awaq_agromo.presentation.model.InformeData
 import com.example.awaq_agromo.presentation.screens.dashboard.sampleInformesRecientes
+import com.example.awaq_agromo.presentation.theme.AgromoTheme
 
 val sampleInformes: List<InformeData> = listOf(
     InformeData("12 sept", "Informe integral", "Atender",  Color.Red, R.drawable.image_ph, "Calabaza"),
@@ -58,95 +59,98 @@ fun PerfilScreen() {
     val colorIconos = colorBorde
 
     var selectedRoute by remember { mutableStateOf(NavItem.Inicio.route) }
-    Box(){
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            Spacer(modifier = Modifier.height(50.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(
-                    onClick = {} // No se que se deberia de poder hacerse...
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBackIosNew,
-                        contentDescription = "Perfil",
-                        tint = colorIconos,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-
-                TitleText(
-                    text = ("Perfil"),
-                    color = Color.Black,
-                    fontSize = 20.sp
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings",
-                        tint = colorIconos,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-
-            }
-            Spacer(modifier = Modifier.height(15.dp))
-            HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
-            Spacer(modifier = Modifier.height(30.dp))
-
-            UserCard(
-                textColor = colorTexto,
-                borderColor = colorBorde,
-                nombreUsuario = "Nombre de Usuario",
-                ubicacion = "Lugar del Usuario",
-                imagenUsuario = R.drawable.chiili
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TitleText(
-                    text = ("Mis informes"),
-                    color = Color.Black,
-                    fontSize = 30.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.height(15.dp))
-
-            LazyColumn(
+    AgromoTheme {
+        Box() {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(bottom = 50.dp),
-
-                contentPadding = PaddingValues(top = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(15.dp)
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
             ) {
+                Spacer(modifier = Modifier.height(50.dp))
 
-                items(sampleInformesRecientes) { informe ->
-                    InfoCard(
-                        informe = informe,
-                        onMoreInformationClick = {
-                             // TODO
-                        }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    IconButton(
+                        onClick = {} // No se que se deberia de poder hacerse...
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBackIosNew,
+                            contentDescription = "Perfil",
+                            tint = colorIconos,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+
+                    TitleText(
+                        text = ("Perfil"),
+                        color = Color.Black,
+                        fontSize = 20.sp
                     )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    IconButton(
+                        onClick = {}
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = colorIconos,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+                HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
+                Spacer(modifier = Modifier.height(30.dp))
+
+                UserCard(
+                    textColor = colorTexto,
+                    borderColor = colorBorde,
+                    nombreUsuario = "Nombre de Usuario",
+                    ubicacion = "Lugar del Usuario",
+                    imagenUsuario = R.drawable.chiili
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    TitleText(
+                        text = ("Mis informes"),
+                        color = Color.Black,
+                        fontSize = 30.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(15.dp))
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(bottom = 50.dp),
+
+                    contentPadding = PaddingValues(top = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(15.dp)
+                ) {
+
+                    items(sampleInformesRecientes) { informe ->
+                        InfoCard(
+                            informe = informe,
+                            onMoreInformationClick = {
+                                // TODO
+                            }
+                        )
+                    }
                 }
             }
         }

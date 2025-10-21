@@ -40,12 +40,13 @@ import com.example.awaq_agromo.presentation.component.ui.ProgressBar
 import com.example.awaq_agromo.presentation.component.buttons.SecondaryButton
 import com.example.awaq_agromo.presentation.component.texts.SubtitleText
 import com.example.awaq_agromo.presentation.component.texts.TitleText
+import com.example.awaq_agromo.presentation.theme.AgromoTheme
 
 @Preview(showSystemUi = true)
 @Composable
 fun Onboarding_Page_2Screen(
     onNextOnboardingPage3: () -> Unit = {}
-){
+) {
     val context = LocalContext.current
     var progress by remember { mutableFloatStateOf(0.5f) }
     var locationPermissionGranted by remember { mutableStateOf(false) }
@@ -66,94 +67,97 @@ fun Onboarding_Page_2Screen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        ProgressBar(progress = progress)
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        TitleText(
-            text = "Información de ubicación climatológica",
-            fontSize = 25.sp
-        )
-        SubtitleText(
-            text = "Obtenga la información actualizada del clima a través de la ubicación",
-            textAlign = androidx.compose.ui.text.style.TextAlign.Start
-        )
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        Box(
+    AgromoTheme {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .size(180.dp)
-                .background(
-                    Color(0xFF829500),
-                    shape = MaterialTheme.shapes.medium)
+                .fillMaxSize()
+                .padding(horizontal = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Column(
+            ProgressBar(progress = progress)
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            TitleText(
+                text = "Información de ubicación climatológica",
+                fontSize = 25.sp
+            )
+            SubtitleText(
+                text = "Obtenga la información actualizada del clima a través de la ubicación",
+                textAlign = androidx.compose.ui.text.style.TextAlign.Start
+            )
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Box(
                 modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .size(180.dp)
+                    .background(
+                        Color(0xFF829500),
+                        shape = MaterialTheme.shapes.medium
+                    )
             ) {
-                Box(
+                Column(
                     modifier = Modifier
-                        .size(70.dp)
-                        .clip(shape = CircleShape)
-                        .background(Color.White)
-                        .padding(15.dp)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Place,
-                        contentDescription = "Ubicación",
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .size(70.dp)
+                            .clip(shape = CircleShape)
+                            .background(Color.White)
+                            .padding(15.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Place,
+                            contentDescription = "Ubicación",
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+                    }
+
+                    SubtitleText(
+                        text = "Active los permisos de compartir ubicación",
+                        color = Color.White,
+                        modifier = Modifier
+                            .padding(start = 25.dp, end = 25.dp, top = 15.dp)
                     )
                 }
-
-                SubtitleText(
-                    text = "Active los permisos de compartir ubicación",
-                    color = Color.White,
-                    modifier = Modifier
-                        .padding(start = 25.dp, end = 25.dp, top = 15.dp)
-                )
             }
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            PrimaryButton(
+                text = "Activar",
+                onClick = {
+                    val hasPermission = ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+
+                    if (hasPermission) {
+                        locationPermissionGranted = true
+                        onNextOnboardingPage3()
+                    } else {
+                        locationPermissionLauncher.launch(
+                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+                        )
+                    }
+                }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            SecondaryButton(
+                text = "Ahora no",
+                onClick = onNextOnboardingPage3,
+                textColor = Color(0xFF344E18)
+            )
         }
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        PrimaryButton(
-            text = "Activar",
-            onClick = {
-                val hasPermission = ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-
-                if (hasPermission) {
-                    locationPermissionGranted = true
-                    onNextOnboardingPage3()
-                } else {
-                    locationPermissionLauncher.launch(
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-                    )
-                }
-            }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        SecondaryButton(
-            text = "Ahora no",
-            onClick = onNextOnboardingPage3,
-            textColor = Color(0xFF344E18)
-        )
     }
 }

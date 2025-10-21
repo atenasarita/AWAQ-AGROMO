@@ -54,6 +54,7 @@ import com.example.awaq_agromo.presentation.component.texts.BodyText
 import com.example.awaq_agromo.presentation.component.texts.SubtitleText
 import com.example.awaq_agromo.presentation.theme.Primary900
 import androidx.core.net.toUri
+import com.example.awaq_agromo.presentation.theme.AgromoTheme
 
 @Composable
 fun MalezaScreen(
@@ -109,396 +110,398 @@ fun MalezaScreen(
         ?.getStateFlow<String?>("selectedPhotoUri", null)
         ?.collectAsState()
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp)
-            .padding(top = 56.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        // Título principal
-        item {
-            Text(
-                text = "Malezas",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 10.dp)
-            )
-        }
+    AgromoTheme {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 32.dp)
+                .padding(top = 56.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Título principal
+            item {
+                Text(
+                    text = "Malezas",
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(bottom = 10.dp)
+                )
+            }
 
-        item {
-            Column {
+            item {
+                Column {
+                    Text(
+                        text = "¿Qué tipo de maleza ves?",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OptionItem(
+                            text = "Sí",
+                            isSelected = tieneMalezas,
+                            onOptionSelected = { tieneMalezas = true },
+                            modifier = Modifier.padding(end = 24.dp)
+                        )
+
+                        OptionItem(
+                            text = "No",
+                            isSelected = !tieneMalezas,
+                            onOptionSelected = { tieneMalezas = false }
+                        )
+                    }
+                }
+            }
+
+            item {
                 Text(
                     text = "¿Qué tipo de maleza ves?",
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 12.dp)
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        CheckBoxItem(
+                            text = "Hoja ancha (tréboles, bejucos, verdolagas)",
+                            isSelected = hojaAncha,
+                            onOptionSelected = { hojaAncha = !hojaAncha }
+                        )
+                        CheckBoxItem(
+                            text = "Rastrera o trepadora",
+                            isSelected = rastreraTrepadora,
+                            onOptionSelected = { rastreraTrepadora = !rastreraTrepadora }
+                        )
+                        CheckBoxItem(
+                            text = "Otra / No sé",
+                            isSelected = otraNoSe,
+                            onOptionSelected = { otraNoSe = !otraNoSe }
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        CheckBoxItem(
+                            text = "Hoja angosta (gramíneas)",
+                            isSelected = hojaAngosta,
+                            onOptionSelected = { hojaAngosta = !hojaAngosta }
+                        )
+                        CheckBoxItem(
+                            text = "Arbustiva o alta",
+                            isSelected = arbustivaAlta,
+                            onOptionSelected = { arbustivaAlta = !arbustivaAlta }
+                        )
+                        CheckBoxItem(
+                            text = "Ninguna",
+                            isSelected = ningunaTipo,
+                            onOptionSelected = {
+                                ningunaTipo = !ningunaTipo
+                                // Si selecciona "Ninguna", deseleccionar los otros tipos
+                                if (ningunaTipo) {
+                                    hojaAncha = false
+                                    rastreraTrepadora = false
+                                    otraNoSe = false
+                                    hojaAngosta = false
+                                    arbustivaAlta = false
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, Primary900, RoundedCornerShape(16.dp)),
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        SubtitleText(
+                            text = "Añada imágenes de malezas"
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        BodyText(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = "Tome la fotografía de cerca y con buena luz. Asegúrese que se vea bien el área del cultivo donde aparecen las malezas"
+                        )
+
+                        // Efecto para manejar cuando llega una nueva foto
+                        LaunchedEffect(photoUriState?.value) {
+                            photoUriState?.value?.let { uriString ->
+                                if (uriString.isNotEmpty()) {
+                                    selectedImageUri = uriString.toUri()
+                                    // Limpiar el estado después de usarlo
+                                    navController.currentBackStackEntry
+                                        ?.savedStateHandle
+                                        ?.remove<String>("selectedPhotoUri")
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.CameraAlt,
+                                contentDescription = "Cámara",
+                                tint = Primary900
+                            )
+
+                            PrimaryButton(
+                                modifier = Modifier.weight(1f),
+                                text = "Tomar Foto",
+                                onClick = onPhotoClick
+                            )
+                        }
+
+                        // Mostrar imagen seleccionada si existe
+                        selectedImageUri?.let { uri ->
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Image(
+                                painter = rememberAsyncImagePainter(uri),
+                                contentDescription = "Imagen seleccionada",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                                    .clip(RoundedCornerShape(8.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Image,
+                                contentDescription = "Galería",
+                                tint = Primary900
+                            )
+
+                            PrimaryButton(
+                                modifier = Modifier.weight(1f),
+                                text = "Seleccionar de la galería",
+                                containerColor = Color(0xFFEFFFDE),
+                                contentColor = Primary900,
+                                onClick = {
+                                    // Abrir selector de imágenes
+                                    galleryLauncher.launch(
+                                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, Primary900, RoundedCornerShape(16.dp)),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Porcentaje del área afectada por malezas",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+
+                        Spacer(modifier = Modifier.height(15.dp))
+
+                        BodyText(
+                            text = "Desplace la barra deslizante al punto que de mayor semejanza con la situacion de su cultivo."
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Slider(
+                            value = porcentajeArea,
+                            onValueChange = { porcentajeArea = it },
+                            valueRange = 0f..100f,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Text(
+                            text = "Porcentaje seleccionado: ${porcentajeArea.toInt()}%",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                    }
+                }
+            }
+
+            // Quinta sección: Preguntas adicionales
+            item {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "¿Dónde se concentran?",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    Column(
+                        modifier = Modifier.padding(start = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        CheckBoxItem(
+                            text = "En los bordes",
+                            isSelected = enLosBordes,
+                            onOptionSelected = { enLosBordes = !enLosBordes }
+                        )
+                        CheckBoxItem(
+                            text = "En zonas dispersas",
+                            isSelected = enZonasDispersas,
+                            onOptionSelected = { enZonasDispersas = !enZonasDispersas }
+                        )
+                        CheckBoxItem(
+                            text = "En el centro",
+                            isSelected = enElCentro,
+                            onOptionSelected = { enElCentro = !enElCentro }
+                        )
+                        CheckBoxItem(
+                            text = "En todo el cultivo",
+                            isSelected = enTodoElCultivo,
+                            onOptionSelected = { enTodoElCultivo = !enTodoElCultivo }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "¿Ha aplicado algún tipo de control sobre las malezas?",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    Column(
+                        modifier = Modifier.padding(start = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        CheckBoxItem(
+                            text = "Sí, manual (machete, azadón)",
+                            isSelected = controlManual,
+                            onOptionSelected = { controlManual = !controlManual }
+                        )
+                        CheckBoxItem(
+                            text = "Sí, químico (herbicida)",
+                            isSelected = controlQuimico,
+                            onOptionSelected = { controlQuimico = !controlQuimico }
+                        )
+                        CheckBoxItem(
+                            text = "Sí, cubriendo el suelo con cobertura orgánica",
+                            isSelected = controlCobertura,
+                            onOptionSelected = { controlCobertura = !controlCobertura }
+                        )
+                        CheckBoxItem(
+                            text = "No se ha hecho control",
+                            isSelected = noControl,
+                            onOptionSelected = {
+                                noControl = !noControl
+                                // Si selecciona "No se ha hecho control", deseleccionar los otros controles
+                                if (noControl) {
+                                    controlManual = false
+                                    controlQuimico = false
+                                    controlCobertura = false
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+
+            // Sexta sección: Botones de navegación
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    OptionItem(
-                        text = "Sí",
-                        isSelected = tieneMalezas,
-                        onOptionSelected = { tieneMalezas = true },
-                        modifier = Modifier.padding(end = 24.dp)
+                    BackButton(
+                        modifier = Modifier.weight(1f),
+                        containerColor = Color(0xFFEFFFDE),
+                        contentColor = Primary900,
+                        onClick = onBackPressed
                     )
 
-                    OptionItem(
-                        text = "No",
-                        isSelected = !tieneMalezas,
-                        onOptionSelected = { tieneMalezas = false }
-                    )
-                }
-            }
-        }
+                    Spacer(modifier = Modifier.width(16.dp))
 
-        item {
-            Text(
-                text = "¿Qué tipo de maleza ves?",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    CheckBoxItem(
-                        text = "Hoja ancha (tréboles, bejucos, verdolagas)",
-                        isSelected = hojaAncha,
-                        onOptionSelected = { hojaAncha = !hojaAncha }
-                    )
-                    CheckBoxItem(
-                        text = "Rastrera o trepadora",
-                        isSelected = rastreraTrepadora,
-                        onOptionSelected = { rastreraTrepadora = !rastreraTrepadora }
-                    )
-                    CheckBoxItem(
-                        text = "Otra / No sé",
-                        isSelected = otraNoSe,
-                        onOptionSelected = { otraNoSe = !otraNoSe }
-                    )
-                }
-
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    CheckBoxItem(
-                        text = "Hoja angosta (gramíneas)",
-                        isSelected = hojaAngosta,
-                        onOptionSelected = { hojaAngosta = !hojaAngosta }
-                    )
-                    CheckBoxItem(
-                        text = "Arbustiva o alta",
-                        isSelected = arbustivaAlta,
-                        onOptionSelected = { arbustivaAlta = !arbustivaAlta }
-                    )
-                    CheckBoxItem(
-                        text = "Ninguna",
-                        isSelected = ningunaTipo,
-                        onOptionSelected = {
-                            ningunaTipo = !ningunaTipo
-                            // Si selecciona "Ninguna", deseleccionar los otros tipos
-                            if (ningunaTipo) {
-                                hojaAncha = false
-                                rastreraTrepadora = false
-                                otraNoSe = false
-                                hojaAngosta = false
-                                arbustivaAlta = false
-                            }
-                        }
-                    )
-                }
-            }
-        }
-
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, Primary900, RoundedCornerShape(16.dp)),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    SubtitleText(
-                        text = "Añada imágenes de malezas"
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    BodyText(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "Tome la fotografía de cerca y con buena luz. Asegúrese que se vea bien el área del cultivo donde aparecen las malezas"
-                    )
-
-                    // Efecto para manejar cuando llega una nueva foto
-                    LaunchedEffect(photoUriState?.value) {
-                        photoUriState?.value?.let { uriString ->
-                            if (uriString.isNotEmpty()) {
-                                selectedImageUri = uriString.toUri()
-                                // Limpiar el estado después de usarlo
-                                navController.currentBackStackEntry
-                                    ?.savedStateHandle
-                                    ?.remove<String>("selectedPhotoUri")
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.CameraAlt,
-                            contentDescription = "Cámara",
-                            tint = Primary900
-                        )
-
-                        PrimaryButton(
-                            modifier = Modifier.weight(1f),
-                            text = "Tomar Foto",
-                            onClick = onPhotoClick
-                        )
-                    }
-
-                    // Mostrar imagen seleccionada si existe
-                    selectedImageUri?.let { uri ->
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Image(
-                            painter = rememberAsyncImagePainter(uri),
-                            contentDescription = "Imagen seleccionada",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp)
-                                .clip(RoundedCornerShape(8.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Image,
-                            contentDescription = "Galería",
-                            tint = Primary900
-                        )
-
-                        PrimaryButton(
-                            modifier = Modifier.weight(1f),
-                            text = "Seleccionar de la galería",
-                            containerColor = Color(0xFFEFFFDE),
-                            contentColor = Primary900,
-                            onClick = {
-                                // Abrir selector de imágenes
-                                galleryLauncher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    PrimaryButton(
+                        modifier = Modifier.weight(1f),
+                        text = "Finalizar",
+                        onClick = {
+                            // Aquí puedes guardar todos los datos recopilados
+                            // Por ejemplo, enviarlos a un ViewModel, base de datos, etc.
+                            val datosMalezas = DatosMalezas(
+                                tieneMalezas = tieneMalezas,
+                                tiposMaleza = listOf(
+                                    "hojaAncha" to hojaAncha,
+                                    "rastreraTrepadora" to rastreraTrepadora,
+                                    "otraNoSe" to otraNoSe,
+                                    "hojaAngosta" to hojaAngosta,
+                                    "arbustivaAlta" to arbustivaAlta,
+                                    "ningunaTipo" to ningunaTipo
+                                ),
+                                porcentajeArea = porcentajeArea.toInt(),
+                                concentracion = listOf(
+                                    "enLosBordes" to enLosBordes,
+                                    "enZonasDispersas" to enZonasDispersas,
+                                    "enElCentro" to enElCentro,
+                                    "enTodoElCultivo" to enTodoElCultivo
+                                ),
+                                controlesAplicados = listOf(
+                                    "controlManual" to controlManual,
+                                    "controlQuimico" to controlQuimico,
+                                    "controlCobertura" to controlCobertura,
+                                    "noControl" to noControl
                                 )
-                            }
-                        )
-                    }
-                }
-            }
-        }
+                            )
 
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, Primary900,RoundedCornerShape(16.dp)),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Porcentaje del área afectada por malezas",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                            // Procesar los datos como necesites
+                            procesarDatosMalezas(datosMalezas)
 
-                    Spacer(modifier = Modifier.height(15.dp))
-
-                    BodyText(
-                        text = "Desplace la barra deslizante al punto que de mayor semejanza con la situacion de su cultivo."
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Slider(
-                        value = porcentajeArea,
-                        onValueChange = { porcentajeArea = it },
-                        valueRange = 0f..100f,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Text(
-                        text = "Porcentaje seleccionado: ${porcentajeArea.toInt()}%",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                }
-            }
-        }
-
-        // Quinta sección: Preguntas adicionales
-        item {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "¿Dónde se concentran?",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-                Column(
-                    modifier = Modifier.padding(start = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    CheckBoxItem(
-                        text = "En los bordes",
-                        isSelected = enLosBordes,
-                        onOptionSelected = { enLosBordes = !enLosBordes }
-                    )
-                    CheckBoxItem(
-                        text = "En zonas dispersas",
-                        isSelected = enZonasDispersas,
-                        onOptionSelected = { enZonasDispersas = !enZonasDispersas }
-                    )
-                    CheckBoxItem(
-                        text = "En el centro",
-                        isSelected = enElCentro,
-                        onOptionSelected = { enElCentro = !enElCentro }
-                    )
-                    CheckBoxItem(
-                        text = "En todo el cultivo",
-                        isSelected = enTodoElCultivo,
-                        onOptionSelected = { enTodoElCultivo = !enTodoElCultivo }
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = "¿Ha aplicado algún tipo de control sobre las malezas?",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-                Column(
-                    modifier = Modifier.padding(start = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    CheckBoxItem(
-                        text = "Sí, manual (machete, azadón)",
-                        isSelected = controlManual,
-                        onOptionSelected = { controlManual = !controlManual }
-                    )
-                    CheckBoxItem(
-                        text = "Sí, químico (herbicida)",
-                        isSelected = controlQuimico,
-                        onOptionSelected = { controlQuimico = !controlQuimico }
-                    )
-                    CheckBoxItem(
-                        text = "Sí, cubriendo el suelo con cobertura orgánica",
-                        isSelected = controlCobertura,
-                        onOptionSelected = { controlCobertura = !controlCobertura }
-                    )
-                    CheckBoxItem(
-                        text = "No se ha hecho control",
-                        isSelected = noControl,
-                        onOptionSelected = {
-                            noControl = !noControl
-                            // Si selecciona "No se ha hecho control", deseleccionar los otros controles
-                            if (noControl) {
-                                controlManual = false
-                                controlQuimico = false
-                                controlCobertura = false
-                            }
+                            // Navegar a la siguiente pantalla
+                            onDashboardClick
                         }
                     )
                 }
             }
-        }
 
-        // Sexta sección: Botones de navegación
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                BackButton(
-                    modifier = Modifier.weight(1f),
-                    containerColor = Color(0xFFEFFFDE),
-                    contentColor = Primary900,
-                    onClick = onBackPressed
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                PrimaryButton(
-                    modifier = Modifier.weight(1f),
-                    text = "Finalizar",
-                    onClick = {
-                        // Aquí puedes guardar todos los datos recopilados
-                        // Por ejemplo, enviarlos a un ViewModel, base de datos, etc.
-                        val datosMalezas = DatosMalezas(
-                            tieneMalezas = tieneMalezas,
-                            tiposMaleza = listOf(
-                                "hojaAncha" to hojaAncha,
-                                "rastreraTrepadora" to rastreraTrepadora,
-                                "otraNoSe" to otraNoSe,
-                                "hojaAngosta" to hojaAngosta,
-                                "arbustivaAlta" to arbustivaAlta,
-                                "ningunaTipo" to ningunaTipo
-                            ),
-                            porcentajeArea = porcentajeArea.toInt(),
-                            concentracion = listOf(
-                                "enLosBordes" to enLosBordes,
-                                "enZonasDispersas" to enZonasDispersas,
-                                "enElCentro" to enElCentro,
-                                "enTodoElCultivo" to enTodoElCultivo
-                            ),
-                            controlesAplicados = listOf(
-                                "controlManual" to controlManual,
-                                "controlQuimico" to controlQuimico,
-                                "controlCobertura" to controlCobertura,
-                                "noControl" to noControl
-                            )
-                        )
-
-                        // Procesar los datos como necesites
-                        procesarDatosMalezas(datosMalezas)
-
-                        // Navegar a la siguiente pantalla
-                        onDashboardClick
-                    }
-                )
+            // Espacio extra para el BottomBar
+            item {
+                Spacer(modifier = Modifier.height(80.dp))
             }
-        }
-
-        // Espacio extra para el BottomBar
-        item {
-            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }

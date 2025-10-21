@@ -23,47 +23,52 @@ import com.example.awaq_agromo.R
 import com.example.awaq_agromo.presentation.component.buttons.PrimaryButton
 import com.example.awaq_agromo.presentation.component.texts.SubtitleText
 import com.example.awaq_agromo.presentation.component.texts.TitleText
+import com.example.awaq_agromo.presentation.theme.AgromoTheme
 
 @Preview(showSystemUi = true)
 @Composable
 fun Onboarding_Page_1Screen(
     onNextOnboardingPage2: () -> Unit = {}
-){
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        TitleText(
-            text = "¡Bienvenido a Agromo!"
-        )
+) {
 
-        Box(
+    AgromoTheme {
+        Column(
             modifier = Modifier
-                .padding(16.dp)
-                .background(
-                    Color(0xFF829500),
-                    shape = MaterialTheme.shapes.medium)
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            SubtitleText(
-                text = "Mantenga todo los parámetros de seguimiento de sus cultivos al día y colsulte el saber local con la comunidad",
-                modifier = Modifier.padding(10.dp),
-                color = Color.White
+            TitleText(
+                text = "¡Bienvenido a Agromo!"
+            )
 
+            Box(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .background(
+                        Color(0xFF829500),
+                        shape = MaterialTheme.shapes.medium
+                    )
+            ) {
+                SubtitleText(
+                    text = "Mantenga todo los parámetros de seguimiento de sus cultivos al día y colsulte el saber local con la comunidad",
+                    modifier = Modifier.padding(10.dp),
+                    color = Color.White
+
+                )
+            }
+
+            Image(
+                painter = painterResource(id = R.drawable.onboarding_page_1),
+                contentDescription = "Granjera cosechando",
+                modifier = Modifier.size(500.dp)
+            )
+
+            PrimaryButton(
+                text = "Comenzar",
+                onClick = onNextOnboardingPage2
             )
         }
-
-        Image(
-            painter = painterResource(id = R.drawable.onboarding_page_1),
-            contentDescription = "Granjera cosechando",
-            modifier = Modifier.size(500.dp)
-        )
-
-        PrimaryButton(
-            text = "Comenzar",
-            onClick = onNextOnboardingPage2
-        )
     }
 }

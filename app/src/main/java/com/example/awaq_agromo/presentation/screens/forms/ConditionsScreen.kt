@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.example.awaq_agromo.R
 import com.example.awaq_agromo.presentation.component.buttons.AgromoPrimaryButton
 import com.example.awaq_agromo.presentation.component.ui.HorizontalDotBar
+import com.example.awaq_agromo.presentation.theme.AgromoTheme
 import com.example.awaq_agromo.presentation.theme.Neutral400
 import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
 import kotlin.collections.forEach
@@ -59,206 +60,207 @@ fun ConditionsScreen(
     var organicMatter by remember { mutableStateOf("") }
     var cic by remember { mutableStateOf("") }
 
-
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF6FCE7))
-    ) {
-        Column(
+    AgromoTheme {
+        Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(20.dp),
-            //horizontalAlignment = Alignment.CenterHorizontally
+                .background(Color(0xFFF6FCE7))
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Suelo y condiciones",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
-                ),
-                color = Color.Black,
-                textAlign = TextAlign.Start
-            )
-            Text(
-                text = "Completa los datos que dispongas; el resto puede omitirse.",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray,
-                textAlign = TextAlign.Start
-            )
-
-            HorizontalDotBar(
-                n = 13,
-                k = 4,
-                modifier = Modifier.padding(16.dp)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // ---- UBICACIÓN Y CLIMA ----
-            SectionTitle("Ubicación y clima")
-            Text(
-                text = "Ubicación de el cultivo y condiciones climaticas al momento de toma de datos.",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-            DisabledTextField("Ubicación", "Bucaramanga, Santander COLOMBIA")
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 6.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(20.dp),
+                //horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ClimateBox("Humedad", "48%")
-                ClimateBox("Viento", "10 km/h")
-                ClimateBox("Lluvias", "22%")
-                ClimateBox("Temp.", "23°C")
-            }
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Spacer(modifier = Modifier.height(20.dp))
-            HorizontalDivider(Modifier, DividerDefaults.Thickness, color = Color.LightGray)
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // ---- VARIEDAD CULTIVADA ----
-            SectionTitle("Variedad cultivada")
-            DisabledTextField("Variedad", "Maíz")
-            DisabledTextField("Fecha de la siembra", "12/08/2025")
-
-            Spacer(modifier = Modifier.height(20.dp))
-            HorizontalDivider(Modifier, DividerDefaults.Thickness, color = Color.LightGray)
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // ---- HUMEDAD DEL SUELO ----
-            SectionTitle("Humedad del suelo")
-            DisabledTextField("Con sensor digital", "Humedad 67%")
-
-            Spacer(modifier = Modifier.height(20.dp))
-            HorizontalDivider(Modifier, DividerDefaults.Thickness, color = Color.LightGray)
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // ---- FERTILIDAD DEL SUELO ----
-            SectionTitle("Fertilidad del suelo")
-            Text(
-                text = "Indique la fertilidad del suelo, ya sea mediante análisis digital o de forma manual.",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Image(
-                painter = painterResource(id = R.drawable.soil_illustration),
-                contentDescription = "Ilustración suelo",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(140.dp),
-                contentScale = ContentScale.Fit
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // ---- REGISTRO MANUAL ----
-            Text(
-                text = "Registro manual",
-                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                color = Color.Black
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                OutlinedTextField(
-                    value = selectedOption,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Seleccionar nivel") },
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedBorderColor = PrincipalPrimary,
-                        unfocusedBorderColor = Neutral400,
-                        cursorColor = PrincipalPrimary,
+                Text(
+                    text = "Suelo y condiciones",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
                     ),
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
+                    color = Color.Black,
+                    textAlign = TextAlign.Start
                 )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                Text(
+                    text = "Completa los datos que dispongas; el resto puede omitirse.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray,
+                    textAlign = TextAlign.Start
+                )
+
+                HorizontalDotBar(
+                    n = 13,
+                    k = 4,
+                    modifier = Modifier.padding(16.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // ---- UBICACIÓN Y CLIMA ----
+                SectionTitle("Ubicación y clima")
+                Text(
+                    text = "Ubicación de el cultivo y condiciones climaticas al momento de toma de datos.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                DisabledTextField("Ubicación", "Bucaramanga, Santander COLOMBIA")
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    opcionesFertilidad.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option) },
-                            onClick = {
-                                selectedOption = option
-                                expanded = false
-                            }
-                        )
+                    ClimateBox("Humedad", "48%")
+                    ClimateBox("Viento", "10 km/h")
+                    ClimateBox("Lluvias", "22%")
+                    ClimateBox("Temp.", "23°C")
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+                HorizontalDivider(Modifier, DividerDefaults.Thickness, color = Color.LightGray)
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // ---- VARIEDAD CULTIVADA ----
+                SectionTitle("Variedad cultivada")
+                DisabledTextField("Variedad", "Maíz")
+                DisabledTextField("Fecha de la siembra", "12/08/2025")
+
+                Spacer(modifier = Modifier.height(20.dp))
+                HorizontalDivider(Modifier, DividerDefaults.Thickness, color = Color.LightGray)
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // ---- HUMEDAD DEL SUELO ----
+                SectionTitle("Humedad del suelo")
+                DisabledTextField("Con sensor digital", "Humedad 67%")
+
+                Spacer(modifier = Modifier.height(20.dp))
+                HorizontalDivider(Modifier, DividerDefaults.Thickness, color = Color.LightGray)
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // ---- FERTILIDAD DEL SUELO ----
+                SectionTitle("Fertilidad del suelo")
+                Text(
+                    text = "Indique la fertilidad del suelo, ya sea mediante análisis digital o de forma manual.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Image(
+                    painter = painterResource(id = R.drawable.soil_illustration),
+                    contentDescription = "Ilustración suelo",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp),
+                    contentScale = ContentScale.Fit
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // ---- REGISTRO MANUAL ----
+                Text(
+                    text = "Registro manual",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = selectedOption,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Seleccionar nivel") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedBorderColor = PrincipalPrimary,
+                            unfocusedBorderColor = Neutral400,
+                            cursorColor = PrincipalPrimary,
+                        ),
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        opcionesFertilidad.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option) },
+                                onClick = {
+                                    selectedOption = option
+                                    expanded = false
+                                }
+                            )
+                        }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // ---- REGISTRO CON SENSOR DIGITAL ----
+                Text(
+                    text = "Registro con sensor digital",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                    color = Color.Black
+                )
+                LabeledNumberTextField(
+                    label = "Nitrógeno (N)",
+                    value = nitrogen,
+                    onValueChange = { nitrogen = it },
+                    placeholder = "Valor mg/kg"
+                )
+                LabeledNumberTextField(
+                    label = "Fósforo (P)",
+                    value = phosphorus,
+                    onValueChange = { phosphorus = it },
+                    placeholder = "Valor mg/kg"
+                )
+                LabeledNumberTextField(
+                    label = "Potasio (K)",
+                    value = potassium,
+                    onValueChange = { potassium = it },
+                    placeholder = "Valor mg/kg"
+                )
+                LabeledNumberTextField(
+                    label = "Materia\norgánica",
+                    value = organicMatter,
+                    onValueChange = { organicMatter = it },
+                    placeholder = "Valor %"
+                )
+                LabeledNumberTextField(
+                    label = "CIC",
+                    value = cic,
+                    onValueChange = { cic = it },
+                    placeholder = "Valor cmol/kg"
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // ---- BOTÓN SIGUIENTE ----
+                AgromoPrimaryButton(
+                    text = "Siguiente",
+                    onClick = onOnboardingClick // placeholder para boton de siguiente pantalla
+                )
+
+                Spacer(modifier = Modifier.height(40.dp))
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // ---- REGISTRO CON SENSOR DIGITAL ----
-            Text(
-                text = "Registro con sensor digital",
-                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                color = Color.Black
-            )
-            LabeledNumberTextField(
-                label = "Nitrógeno (N)",
-                value = nitrogen,
-                onValueChange = { nitrogen = it },
-                placeholder = "Valor mg/kg"
-            )
-            LabeledNumberTextField(
-                label = "Fósforo (P)",
-                value = phosphorus,
-                onValueChange = { phosphorus = it },
-                placeholder = "Valor mg/kg"
-            )
-            LabeledNumberTextField(
-                label = "Potasio (K)",
-                value = potassium,
-                onValueChange = { potassium = it },
-                placeholder = "Valor mg/kg"
-            )
-            LabeledNumberTextField(
-                label = "Materia\norgánica",
-                value = organicMatter,
-                onValueChange = { organicMatter = it },
-                placeholder = "Valor %"
-            )
-            LabeledNumberTextField(
-                label = "CIC",
-                value = cic,
-                onValueChange = { cic = it },
-                placeholder = "Valor cmol/kg"
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // ---- BOTÓN SIGUIENTE ----
-            AgromoPrimaryButton(
-                text = "Siguiente",
-                onClick = onOnboardingClick // placeholder para boton de siguiente pantalla
-            )
-
-            Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }
