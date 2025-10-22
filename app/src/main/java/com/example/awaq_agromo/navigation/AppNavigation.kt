@@ -28,10 +28,12 @@ import com.example.awaq_agromo.presentation.screens.camera.Analysis.AnalysisScre
 import com.example.awaq_agromo.presentation.screens.camera.PhotoScreen
 import com.example.awaq_agromo.presentation.screens.dashboard.DashboardScreen
 import com.example.awaq_agromo.presentation.screens.forms.ConditionsScreen
+import com.example.awaq_agromo.presentation.screens.forms.DevelopmentScreen
 import com.example.awaq_agromo.presentation.screens.forms.FoliageScreen
 import com.example.awaq_agromo.presentation.screens.forms.HumedadScreen
 import com.example.awaq_agromo.presentation.screens.forms.MalezaScreen
 import com.example.awaq_agromo.presentation.screens.forms.MonitoreoScreen
+import com.example.awaq_agromo.presentation.screens.forms.PhScreen
 import com.example.awaq_agromo.presentation.screens.forms.PlagueScreen
 import com.example.awaq_agromo.presentation.screens.forms.SicknessScreen
 import com.example.awaq_agromo.presentation.screens.forms.StatesScreen
@@ -64,7 +66,7 @@ fun AppNavigation(
             )
         }
 
-        composable("login") {
+      /*  composable("login") {
             val viewModel: LoginViewModel = hiltViewModel()
             LoginScreen(
                 viewModel = viewModel,
@@ -74,7 +76,7 @@ fun AppNavigation(
                     }
                 }
             )
-        }
+        }*/
 
         composable("registration") {
             val viewModel: RegistrationViewModel = hiltViewModel()
@@ -97,12 +99,34 @@ fun AppNavigation(
         composable("Onboarding_3") {
             Onboarding_Page_3Screen(
                 onDashboardClick = {
-                    navController.navigate("main_host") {
+                    navController.navigate("login?message=onboarding_success") {
                         popUpTo("welcome") { inclusive = true }
                     }
                 }
+
             )
         }
+
+        composable(
+            route = "login?message={message}",
+            arguments = listOf(navArgument("message") { defaultValue = "" })
+        ) { backStackEntry ->
+            val message = backStackEntry.arguments?.getString("message")
+            val viewModel: LoginViewModel = hiltViewModel()
+
+            LoginScreen(
+                viewModel = viewModel,
+
+
+                onDashboardClick = { navController.navigate("main_host") {
+                    popUpTo("welcome") {
+                        inclusive = true }
+                    } }, registrationMessage = if (message == "onboarding_success")
+                    "Has sido registrado y has tomado el onboarding con éxito. Por favor, inicia sesión."
+                else null
+            )
+        }
+
 
 
         composable("main_host") {
@@ -185,6 +209,14 @@ fun MainScreenHost(navController: NavHostController) {
             composable("humedad"){
                 HumedadScreen(
                     onNext = {
+                        bottomNavController.navigate("ph")
+                    }
+                )
+            }
+
+            composable("ph"){
+                PhScreen(
+                    onNext = {
                         bottomNavController.navigate("conditions")
                     }
                 )
@@ -198,7 +230,15 @@ fun MainScreenHost(navController: NavHostController) {
                     selectedOption = selectedOption,
                     onOptionSelected = { selectedOption = it },
                     onOnboardingClick = {
-                        bottomNavController.navigate("states")
+                        bottomNavController.navigate("desarrollo")
+                    }
+                )
+            }
+
+            composable("desarrollo"){
+                DevelopmentScreen(
+                    onNext = {
+                        bottomNavController.navigate("foliage")
                     }
                 )
             }
