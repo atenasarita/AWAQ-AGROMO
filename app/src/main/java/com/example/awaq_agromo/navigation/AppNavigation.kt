@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -110,19 +111,60 @@ fun AppNavigation(
         }
 
         composable("photo_screen") {
-            PhotoScreen(navController = navController)
+            PhotoScreen(
+                navController = navController,
+                origin = "default"
+            )
+        }
+
+        composable("malezas") {
+            val context = LocalContext.current
+
+            MalezaScreen(
+                navController = navController,
+                onPhotoClick = {
+                    navController.navigate("photo_screen/formulario")
+                },
+                onDashboardClick = {
+                    navController.navigate("main_host") {
+                        popUpTo("welcome") { inclusive = true }
+                    }
+                },
+                onBackPressed = { navController.popBackStack() },
+                context = context
+            )
+        }
+
+        // RUTAS SEPARADAS PARA LA CÁMARA SEGÚN EL ORIGEN
+        composable("photo_screen/main_host") {
+            PhotoScreen(
+                navController = navController,
+                origin = "dashboard"
+            )
+        }
+
+        composable("photo_screen/formulario") {
+            PhotoScreen(
+                navController = navController,
+                origin = "formulario"
+            )
         }
 
         composable(
             route = "analysis/{imageUri}",
-            arguments = listOf(navArgument("imageUri") {
-                type = NavType.StringType
-                nullable = true
-            })
+            arguments = listOf(
+                navArgument("imageUri") {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
         ) { backStackEntry ->
             val encodedUri = backStackEntry.arguments?.getString("imageUri")
             val decodedUri = encodedUri?.let { Uri.decode(it) }
-            AnalysisScreen(navController = navController, imageUri = decodedUri)
+            AnalysisScreen(
+                navController = navController,
+                imageUri = decodedUri
+            )
         }
     }
 }
@@ -162,7 +204,9 @@ fun MainScreenHost(navController: NavHostController) {
 
                 DashboardScreen(
                     navController = bottomNavController,
+                    onPhotoClick = { navController.navigate("photo_screen") },
                     userViewModel = viewModel
+
                 )
             }
 
@@ -230,23 +274,26 @@ fun MainScreenHost(navController: NavHostController) {
             composable("enfermedades"){
                 SicknessScreen(
                     onNext = {
-                        bottomNavController.navigate("maleza")
+                        bottomNavController.navigate("malezas")
                     }
                 )
             }
 
-            composable("maleza") {
+            composable("malezas") {
+                val context = LocalContext.current
+
                 MalezaScreen(
-                    navController = bottomNavController,
+                    navController = navController,
                     onPhotoClick = {
-                        bottomNavController.navigate("photo_screen")
-                    },
-                    onBackPressed = {
-                        bottomNavController.popBackStack()
+                        navController.navigate("photo_screen/formulario")
                     },
                     onDashboardClick = {
-                        bottomNavController.navigate("dashboard")
-                    }
+                        navController.navigate("main_host") {
+                            popUpTo("welcome") { inclusive = true }
+                        }
+                    },
+                    onBackPressed = { navController.popBackStack() },
+                    context = context
                 )
             }
 
