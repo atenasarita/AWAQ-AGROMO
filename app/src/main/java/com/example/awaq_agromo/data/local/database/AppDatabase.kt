@@ -8,6 +8,7 @@ import com.example.awaq_agromo.data.local.daos.HumedadDao
 import com.example.awaq_agromo.data.local.entity.VariedadEntity
 import com.example.awaq_agromo.data.local.entity.HumedadEntity
 
+// store de datos en la base local
 @Database(
     entities = [
         VariedadEntity::class,
