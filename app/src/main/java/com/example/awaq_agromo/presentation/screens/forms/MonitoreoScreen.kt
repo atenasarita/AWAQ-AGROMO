@@ -2,19 +2,19 @@ package com.example.awaq_agromo.presentation.screens.forms
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Geocoder
+import android.location.Location
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Search
@@ -23,443 +23,357 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import com.example.awaq_agromo.R
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.awaq_agromo.data.local.store.WeatherLocalStore
 import com.example.awaq_agromo.data.local.store.WeatherSnapshot
-import com.example.awaq_agromo.presentation.component.ui.HorizontalDotBar
-import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
-import com.google.android.gms.location.FusedLocationProviderClient
+import com.example.awaq_agromo.data.remote.api.MonitoreoViewModel
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.Locale
-import kotlin.collections.isNullOrEmpty
-import kotlin.collections.joinToString
-import kotlin.let
-import kotlin.text.format
-import kotlin.text.ifBlank
-import kotlin.text.isNullOrBlank
+import kotlin.coroutines.resume
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.example.awaq_agromo.R
 
-@OptIn(ExperimentalMaterial3Api::class)
+/* Paleta del diseño */
+private val BgLight = Color(0xFFF4F8EF)
+private val SoftGreen = Color(0xFFDDEAD0)
+private val AccentBorder = Color(0xFFBBD8A8)
+private val GreenDark = Color(0xFF2E4A1F)
+private val TextMuted = Color(0xFF4B5563)
+
 @Composable
 fun MonitoreoScreen(
     onNext: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val fused = remember {
-        LocationServices.getFusedLocationProviderClient(context)
-    }
+    val vm: MonitoreoViewModel = hiltViewModel()
 
-    // STATE
-    var place by remember { mutableStateOf<String?>(null) } // Se actualiza con "Ciudad, Estado" o lat/lon
-    var manualCity by remember { mutableStateOf("") }
+    // Mueve a BuildConfig cuando gustes
+    val openWeatherApiKey = "df02eb8f0cefd35cb63747c5c060dcc2"
+
+    var place by remember { mutableStateOf<String?>(null) }
     var isRequesting by remember { mutableStateOf(false) }
     var errorMsg by remember { mutableStateOf<String?>(null) }
+    var manualCity by remember { mutableStateOf(TextFieldValue("")) }
 
-    // Observa el snapshot local cuando ya exista "place"
+    val loading by vm.loading.collectAsState()
+    val repoError by vm.error.collectAsState()
+
     val snapshotFlow = remember(place) {
         if (place.isNullOrBlank()) flowOf<WeatherSnapshot?>(null)
         else WeatherLocalStore.readSnapshot(context, place!!)
     }
     val snapshot by snapshotFlow.collectAsState(initial = null)
 
-    // Launcher permisos
-    val permissionLauncher = rememberLauncherForActivityResult(
+    val permissionsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { perms ->
-        val granted = (perms[Manifest.permission.ACCESS_FINE_LOCATION] == true) ||
-                (perms[Manifest.permission.ACCESS_COARSE_LOCATION] == true)
-        if (!granted) {
-            errorMsg = "Permiso de ubicación denegado."
-            isRequesting = false
-        } else {
-            requestCurrentLocation(
-                fused = fused,
-                onStart = { isRequesting = true },
-                onResult = { lat, lon ->
-                    scope.launch {
-                        val pretty = withContext(Dispatchers.IO) {
-                            reverseGeocodeCityState(lat, lon, context)
-                        }
-                        val label = pretty ?: "${"%.5f".format(lat)}, ${"%.5f".format(lon)}"
+    ) { result ->
+        val granted = result[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                result[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        if (granted) {
+            scope.launch {
+                requestCurrentLocationAndFetch(
+                    context = context,
+                    onResolved = { label, lat, lon ->
                         place = label
-                        errorMsg = null
-
-                        // Guarda snapshot local con los valores del mock (de tu imagen)
-                        WeatherLocalStore.saveSnapshot(
-                            context,
-                            WeatherSnapshot(
-                                locationLabel = label,
-                                humidityPct = 48,
-                                windKmh = 10,
-                                rainPct = 22,
-                                tempC = 23,
-                                timestamp = System.currentTimeMillis()
-                            )
-                        )
+                        vm.fetchAndSave(context, label, lat, lon, openWeatherApiKey)
+                        isRequesting = false
+                    },
+                    onError = { msg ->
+                        errorMsg = msg
                         isRequesting = false
                     }
-                },
-                onError = { msg ->
-                    errorMsg = msg
-                    isRequesting = false
-                }
-            )
+                )
+            }
+        } else {
+            errorMsg = "Permiso de ubicación denegado"
+            isRequesting = false
         }
     }
 
-    // Colores de la app
-    val bgScreen = Color(0xFFF4F8EF)
-    val textPrimary = Color(0xFF1D1D1D)
-    val textSecondary = Color(0xFF424842)
-    val borderSoft = Color(0xFFBBD8A8)
-    val accent = PrincipalPrimary
-
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(bgScreen),
-        color = bgScreen
-    ) {
+    Surface(modifier = Modifier.fillMaxSize(), color = BgLight) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.Top
         ) {
-            // HEADER
-            Spacer(Modifier.height(18.dp))
-            Column(Modifier.padding(horizontal = 20.dp)) {
-                Text(
-                    text = "Registro del Cultivo",
-                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
-                    color = textPrimary
-                )
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    text = "Complete los datos que disponga; el resto puede omitirlo.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = textSecondary
-                )
-                Spacer(Modifier.height(12.dp))
-                HorizontalDotBar(
-                    n = 8, k = 1,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 6.dp, bottom = 18.dp)
-                )
-                Text(
-                    text = "Indique la ubicación de su cultivo",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-                    color = textPrimary
-                )
-            }
+            // Header
+            Text("Registro del Cultivo", fontWeight = FontWeight.Bold, color = Color.Black)
+            Spacer(Modifier.height(4.dp))
+            Text("Complete los datos que disponga; el resto puede omitirlo.", color = TextMuted)
 
-            // CARD principal
+            Spacer(Modifier.height(8.dp))
+            DotBar(n = 10, k = 2) // indicador de progreso similar al de tu captura
+
             Spacer(Modifier.height(12.dp))
-            CardBox(
-                borderSoft = borderSoft
+            Text("Indique la ubicación de su cultivo", color = Color.Black, fontWeight = FontWeight.SemiBold)
+
+            // Ilustración estilo hero (sin depender de drawables)
+            Spacer(Modifier.height(12.dp))
+            HeroIllustration()
+
+            Spacer(Modifier.height(12.dp))
+
+            // Fila de ubicación (icono + texto)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(Color.White)
+                    .border(BorderStroke(1.dp, AccentBorder), RoundedCornerShape(24.dp))
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ubi),
-                    contentDescription = "Ubicación",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(220.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(bgScreen),
-                    contentScale = ContentScale.Fit
-                )
-
-                Spacer(Modifier.height(14.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Outlined.LocationOn,
-                        contentDescription = null,
-                        tint = accent
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = place ?: "Ubicación no establecida",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = textPrimary
-                    )
-                }
-
-                // Muestra las métricas si ya hay snapshot guardado
-                AnimatedVisibility(visible = snapshot != null) {
-                    Spacer(Modifier.height(12.dp))
-                    snapshot?.let { s ->
-                        WeatherStatsRow(
-                            humidity = s.humidityPct,
-                            windKmh = s.windKmh,
-                            rainPct = s.rainPct,
-                            tempC = s.tempC
-                        )
-                    }
-                }
-
-                AnimatedVisibility(visible = errorMsg != null) {
-                    Text(
-                        text = errorMsg ?: "",
-                        color = Color(0xFF8B0000),
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                }
-
-                Spacer(Modifier.height(12.dp))
-
-                OutlinedButton(
-                    onClick = {
-                        if (!hasLocationPermission(context)) {
-                            isRequesting = true
-                            permissionLauncher.launch(
-                                arrayOf(
-                                    Manifest.permission.ACCESS_FINE_LOCATION,
-                                    Manifest.permission.ACCESS_COARSE_LOCATION
-                                )
-                            )
-                            return@OutlinedButton
-                        }
-                        requestCurrentLocation(
-                            fused = fused,
-                            onStart = { isRequesting = true },
-                            onResult = { lat, lon ->
-                                scope.launch {
-                                    val pretty = withContext(Dispatchers.IO) {
-                                        reverseGeocodeCityState(lat, lon, context)
-                                    }
-                                    val label = pretty ?: "${"%.5f".format(lat)}, ${"%.5f".format(lon)}"
-                                    place = label
-                                    errorMsg = null
-
-                                    WeatherLocalStore.saveSnapshot(
-                                        context,
-                                        WeatherSnapshot(
-                                            locationLabel = label,
-                                            humidityPct = 48,
-                                            windKmh = 10,
-                                            rainPct = 22,
-                                            tempC = 23,
-                                            timestamp = System.currentTimeMillis()
-                                        )
-                                    )
-                                    isRequesting = false
-                                }
-                            },
-                            onError = { msg ->
-                                errorMsg = msg
-                                isRequesting = false
-                            }
-                        )
-                    },
-                    shape = RoundedCornerShape(18.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = accent),
-                    border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp)
-                ) {
-                    if (isRequesting) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(18.dp),
-                            strokeWidth = 2.dp,
-                            color = accent
-                        )
-                        Spacer(Modifier.width(12.dp))
-                        Text("Obteniendo ubicación…")
-                    } else {
-                        Text("Usar mi ubicación actual")
-                    }
-                }
-
-                Spacer(Modifier.height(10.dp))
-
+                Icon(Icons.Outlined.LocationOn, contentDescription = null, tint = GreenDark)
+                Spacer(Modifier.width(8.dp))
                 Text(
-                    text = "O complete manualmente",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    color = textSecondary
-                )
-
-                Spacer(Modifier.height(10.dp))
-
-                OutlinedTextField(
-                    value = manualCity,
-                    onValueChange = { manualCity = it },
-                    placeholder = { Text("Busca por ciudad") },
-                    leadingIcon = {
-                        Icon(imageVector = Icons.Outlined.Search, contentDescription = "Buscar")
-                    },
-                    singleLine = true,
-                    shape = RoundedCornerShape(16.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = accent,
-                        unfocusedBorderColor = borderSoft,
-                        cursorColor = accent,
-                        focusedLabelColor = accent
-                    ),
-                    modifier = Modifier.fillMaxWidth()
+                    text = place ?: "Ubicación no establecida",
+                    color = Color.Black,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
 
-            // FOOTER CTA
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(12.dp))
+
+            // Botón outlined "Usar mi ubicación actual"
+            OutlinedButton(
+                onClick = {
+                    errorMsg = null
+                    isRequesting = true
+                    permissionsLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                },
+                shape = RoundedCornerShape(24.dp),
+                border = BorderStroke(1.dp, AccentBorder),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = GreenDark),
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !loading && !isRequesting
+            ) {
+                if (isRequesting) {
+                    CircularProgressIndicator()
+                } else {
+                    Text("Usar mi ubicación actual")
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+            Text("O complete manualmente", color = TextMuted)
+
+            Spacer(Modifier.height(8.dp))
+
+            // Campo búsqueda con icono de lupa
+            OutlinedTextField(
+                value = manualCity,
+                onValueChange = { manualCity = it },
+                modifier = Modifier
+                    .fillMaxWidth(),
+                label = { Text("Busca por ciudad") },
+                trailingIcon = {
+                    Icon(Icons.Outlined.Search, contentDescription = "Buscar", tint = TextMuted)
+                },
+                shape = RoundedCornerShape(16.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = AccentBorder,
+                    unfocusedBorderColor = AccentBorder
+                )
+            )
+
+            // Mensaje de error
+            AnimatedVisibility(visible = errorMsg != null || repoError != null, enter = fadeIn(), exit = fadeOut()) {
+                Spacer(Modifier.height(8.dp))
+                Text(text = errorMsg ?: repoError ?: "", color = Color(0xFF991B1B))
+            }
+
+            // Bloque de stats (opcional; si quieres ocultarlo, comenta esta sección)
+            AnimatedVisibility(visible = snapshot != null, enter = fadeIn(), exit = fadeOut()) {
+                val s = snapshot!!
+                Spacer(Modifier.height(10.dp))
+                StatsChipRow(
+                    temp = "${s.tempC} °C",
+                    hum = "${s.humidityPct} %",
+                    wind = "${s.windKmh} km/h",
+                    rain = "${s.rainPct} %"
+                )
+            }
+
+            Spacer(Modifier.weight(1f))
+
+            // Botón Siguiente (píldora verde)
             Button(
                 onClick = { onNext?.invoke() },
+                shape = RoundedCornerShape(28.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = GreenDark),
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
                     .fillMaxWidth()
-                    .height(54.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = accent)
+                    .height(48.dp)
             ) {
-                Text("Continuar")
+                Text("Siguiente")
             }
-            Spacer(Modifier.height(24.dp))
         }
     }
 }
 
-/* ------------------------- UI helpers ------------------------- */
+/* --- UI helpers para igualar tu diseño --- */
 
 @Composable
-private fun CardBox(
-    borderSoft: Color,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .shadow(2.dp, RoundedCornerShape(24.dp), clip = true)
-            .clip(RoundedCornerShape(24.dp))
-            .background(Color.White)
-            .border(1.dp, borderSoft, RoundedCornerShape(24.dp))
-            .padding(16.dp),
-        content = content
-    )
+private fun DotBar(n: Int, k: Int) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        repeat(n) { i ->
+            val active = i < k
+            Box(
+                modifier = Modifier
+                    .padding(end = 6.dp)
+                    .size(8.dp)
+                    .clip(CircleShape)
+                    .background(if (active) GreenDark else AccentBorder.copy(alpha = 0.5f))
+            )
+        }
+    }
 }
 
 @Composable
-private fun WeatherStatsRow(
-    humidity: Int,
-    windKmh: Int,
-    rainPct: Int,
-    tempC: Int
-) {
-    val titleColor = Color(0xFF9EAD99)   // gris verdoso claro (como en tu mock)
-    val valueColor = Color(0xFF2F312F)   // gris oscuro legible
+private fun HeroIllustration() {
+    val painter = painterResource(id = R.drawable.ubi)
 
-    Row(
+    // Calcula relación de aspecto real de la imagen (fallback a 16:9 si no está disponible)
+    val aspect = remember(painter) {
+        val s = painter.intrinsicSize
+        if (s.width > 0f && s.height > 0f) s.width / s.height else 16f / 9f
+    }
+
+    // Card con bordes redondeados, sombra suave y fondo acorde a tu paleta
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 6.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .aspectRatio(aspect)           // respeta la proporción -> no se recorta
+            .padding(top = 4.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = SoftGreen),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        border = BorderStroke(1.dp, AccentBorder)
     ) {
-        StatCol("Humedad", "$humidity%", titleColor, valueColor)
-        StatCol("Viento", "${windKmh} Km/h", titleColor, valueColor)
-        StatCol("Lluvias", "$rainPct%", titleColor, valueColor)
-        StatCol("Temperatura", "${tempC}°C", titleColor, valueColor)
+        // La imagen se ajusta dentro del contenedor sin recortarse
+        Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp),           // respiración alrededor
+            contentScale = ContentScale.Fit, // SIN recorte (fit dentro del área)
+            alignment = Alignment.Center
+        )
     }
 }
 
 @Composable
-private fun StatCol(
-    title: String,
-    value: String,
-    titleColor: Color,
-    valueColor: Color
-) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(title, color = titleColor, style = MaterialTheme.typography.labelMedium)
-        Spacer(Modifier.height(2.dp))
-        Text(value, color = valueColor, style = MaterialTheme.typography.titleMedium)
+private fun StatsChipRow(temp: String, hum: String, wind: String, rain: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        StatChip("Temp.", temp)
+        StatChip("Humedad", hum)
+        StatChip("Viento", wind)
+        StatChip("Lluvia", rain)
     }
 }
 
-/* ------------------------- Permisos / ubicación ------------------------- */
-
-private fun hasLocationPermission(ctx: Context): Boolean {
-    val fine = ContextCompat.checkSelfPermission(
-        ctx, Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
-    val coarse = ContextCompat.checkSelfPermission(
-        ctx, Manifest.permission.ACCESS_COARSE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
-    return fine || coarse
+@Composable
+private fun StatChip(label: String, value: String) {
+    Surface(
+        shape = RoundedCornerShape(20.dp),
+        color = Color.White,
+        tonalElevation = 0.dp,
+        border = BorderStroke(1.dp, AccentBorder)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(label, color = TextMuted)
+            Spacer(Modifier.width(6.dp))
+            Text(value, color = GreenDark, fontWeight = FontWeight.SemiBold)
+        }
+    }
 }
 
-private fun requestCurrentLocation(
-    fused: FusedLocationProviderClient,
-    onStart: () -> Unit,
-    onResult: (lat: Double, lon: Double) -> Unit,
+/* --- Ubicación + geocoder + Task.await sin play-services coroutines --- */
+
+@SuppressLint("MissingPermission")
+private suspend fun requestCurrentLocationAndFetch(
+    context: android.content.Context,
+    onResolved: (label: String, lat: Double, lon: Double) -> Unit,
     onError: (String) -> Unit
 ) {
-    onStart()
     try {
-        @SuppressLint("MissingPermission")
-        val task = fused.getCurrentLocation(
-            Priority.PRIORITY_HIGH_ACCURACY,
-            /* cancellationToken = */ null
-        )
-        task.addOnSuccessListener { loc ->
-            if (loc != null) onResult(loc.latitude, loc.longitude)
-            else onError("No se pudo obtener la ubicación.")
-        }.addOnFailureListener { e ->
-            onError("Error: ${e.message ?: "ubicación no disponible"}")
+        val fused = LocationServices.getFusedLocationProviderClient(context)
+        val priority = Priority.PRIORITY_HIGH_ACCURACY
+
+        val loc: Location? = fused.getCurrentLocation(priority, /* cancellationToken = */ null).awaitCatching()
+        if (loc == null) {
+            onError("No se pudo obtener la ubicación")
+            return
         }
-    } catch (se: SecurityException) {
-        onError("Permiso de ubicación requerido.")
-    } catch (e: Exception) {
-        onError("Error: ${e.message ?: "ubicación no disponible"}")
+
+        val lat = loc.latitude
+        val lon = loc.longitude
+
+        val label = reverseGeocodeCityState(context, lat, lon)
+            ?: "${"%.5f".format(lat)}, ${"%.5f".format(lon)}"
+
+        onResolved(label, lat, lon)
+    } catch (t: Throwable) {
+        onError(t.message ?: "Error de ubicación")
     }
 }
+
+/** Espera de Task sin kotlinx-coroutines-play-services */
+private suspend fun <T> Task<T>.awaitCatching(): T? =
+    suspendCancellableCoroutine { cont ->
+        addOnCompleteListener { task ->
+            if (task.isSuccessful) cont.resume(task.result) else cont.resume(null)
+        }
+    }
 
 private suspend fun reverseGeocodeCityState(
+    context: android.content.Context,
     lat: Double,
-    lon: Double,
-    context: Context
-): String? = withContext(Dispatchers.IO) {
+    lon: Double
+): String? = kotlinx.coroutines.withContext(Dispatchers.IO) {
     try {
-        val geocoder = Geocoder(context, Locale.getDefault())
-
         @Suppress("DEPRECATION")
-        val result = geocoder.getFromLocation(lat, lon, 1)
-        if (!result.isNullOrEmpty()) {
-            val a = result[0]
-            val city = a.locality ?: a.subAdminArea
-            val state = a.adminArea ?: a.subAdminArea
-            listOfNotNull(city, state).joinToString(", ").ifBlank { null }
+        val geocoder = Geocoder(context, Locale.getDefault())
+        val list = geocoder.getFromLocation(lat, lon, 1)
+        if (!list.isNullOrEmpty()) {
+            val addr = list[0]
+            val city = addr.locality ?: addr.subAdminArea
+            val state = addr.adminArea
+            when {
+                city != null && state != null -> "$city, $state"
+                city != null -> city
+                state != null -> state
+                else -> null
+            }
         } else null
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
-    }
-}
-
-/* ------------------------- Preview ------------------------- */
-
-@Preview(showBackground = true, backgroundColor = 0xFFF4F8EF)
-@Composable
-private fun MonitoreoScreenPreview() {
-    // Preview estático: no usa GPS ni DataStore
-    MaterialTheme {
-        MonitoreoScreen(onNext = null)
     }
 }
