@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.awaq_agromo.R
 import com.example.awaq_agromo.presentation.component.buttons.AgromoPrimaryButton
 import com.example.awaq_agromo.presentation.component.ui.HorizontalDotBar
@@ -256,7 +257,8 @@ fun ConditionsScreen(
             // ---- BOTÓN SIGUIENTE ----
             AgromoPrimaryButton(
                 text = "Siguiente",
-                onClick = onOnboardingClick // placeholder para boton de siguiente pantalla
+                onClick = {
+                }
             )
 
             Spacer(modifier = Modifier.height(40.dp))

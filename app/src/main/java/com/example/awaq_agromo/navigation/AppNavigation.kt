@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -198,20 +199,26 @@ fun MainScreenHost(navController: NavHostController) {
                 )
             }
 
-            composable("variedades"){
+            composable("variedades") { backStackEntry ->
+                val userViewModel: UserViewModel = hiltViewModel() // get ViewModel via Hilt
+                val userId = userViewModel.user.collectAsState().value?.id
+
+                // Make sure crops are loaded when the screen enters
+                LaunchedEffect(userId) {
+                        userViewModel.loadCropsForUser(userId) // pass Int directly
+                }
+
                 VariedadScreen(
+                    userViewModel = userViewModel,
                     onNext = {
                         bottomNavController.navigate("humedad")
                     }
                 )
             }
 
-            composable("humedad"){
-                HumedadScreen(
-                    onNext = {
-                        bottomNavController.navigate("ph")
-                    }
-                )
+
+            composable("humedad") { backStackEntry ->
+                HumedadScreen(navController = navController)
             }
 
             composable("ph"){

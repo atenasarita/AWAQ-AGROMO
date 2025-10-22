@@ -1,5 +1,7 @@
 package com.example.awaq_agromo.presentation.screens.dashboard
 
+import android.app.Application
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -17,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.awaq_agromo.R
+import kotlin.jvm.java
 import com.example.awaq_agromo.presentation.component.ui.HeaderSection
 import com.example.awaq_agromo.presentation.component.ui.NavItem
 import com.example.awaq_agromo.presentation.component.dashboard.MonitoreoCard
@@ -32,18 +36,11 @@ import com.example.awaq_agromo.presentation.component.profile.InfoCard
 import com.example.awaq_agromo.presentation.model.InformeData
 import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
 import com.example.awaq_agromo.presentation.viewmodel.UserViewModel
+import dagger.hilt.android.EntryPointAccessors
+import com.example.awaq_agromo.di.DataStoreEntryPoint
+import com.example.awaq_agromo.data.local.store.CultivosUsuario
+import kotlinx.coroutines.launch
 
-data class CropItem(val iconRes: Int, val description: String)
-
-val sampleCropItems = listOf(
-    CropItem(R.drawable.chiili, "Chili"),
-    CropItem(R.drawable.eggplant, "Berenjena"),
-    CropItem(R.drawable.olive, "Aceituna"),
-    CropItem(R.drawable.tomate, "Tomate"),
-    CropItem(R.drawable.calabaza, "Calabaza"),
-    CropItem(R.drawable.olive, "Aceituna"),
-    CropItem(R.drawable.olive, "Aceituna"),
-)
 
 val sampleInformesRecientes: List<InformeData> = listOf(
     InformeData("12 sept", "Informe integral", "Pimiento", Color(0xFF6A9930), R.drawable.image_ph, "Calabaza"),
@@ -57,16 +54,32 @@ val sampleInformesRecientes: List<InformeData> = listOf(
 @Composable
 fun DashboardScreen(
     navController: NavController,
-    userViewModel: UserViewModel = hiltViewModel()
-   // weatherViewModel: WeatherViewModel = hiltViewModel()
+    userViewModel: UserViewModel = hiltViewModel(),
 ) {
+
     val user by userViewModel.user.collectAsState()
+    val crops by userViewModel.crops.collectAsState()
+
+    val userId = user?.id?.toString() ?: ""
     val username = user?.username ?: "Invitado"
-   // val weather by weatherViewModel.weather
 
     LaunchedEffect(Unit) {
         userViewModel.fetchCurrentUser()
     }
+
+    val context = LocalContext.current
+    val cultivosStore = remember {
+        EntryPointAccessors.fromApplication(
+            context.applicationContext as Application,
+            DataStoreEntryPoint::class.java // ✅ use .java, not ::class
+        ).cultivosUsuario()
+    }
+
+    val cropsList by cultivosStore.readSelected(userId)
+        .collectAsState(initial = emptySet())
+
+    Log.d("DashboardScreen", "Crops read from store: $cropsList")
+    Log.d("DashboardScreen", "UserId: $userId")
 
     Scaffold { paddingValues ->
         LazyColumn(
@@ -78,10 +91,10 @@ fun DashboardScreen(
             verticalArrangement = Arrangement.spacedBy(35.dp)
         ) {
             item { HeaderSection(userName = username) }
-         //   item { WeatherCard(weather = weather) } // Pass weather here
+            //   item { WeatherCard(weather = weather) } // Pass weather here
             item { MonitoreoCard(navController = navController) }
-            item { MisCultivos(sampleCropItems) }
-            item { QuickInputSection() }
+            item { MisCultivos(crops.toList()) }
+            item { QuickInputSection(userViewModel = userViewModel) }
             item { CropPhotosSection() }
 
 
@@ -131,10 +144,11 @@ fun DashboardScreen(
     }
 }
 
-
-
 @Composable
-fun QuickInputSection() {
+fun QuickInputSection(userViewModel: UserViewModel) {
+    var showDialog by remember { mutableStateOf(false) }
+    var newCropName by remember { mutableStateOf("") }
+
     Column {
         Text(
             text = "Ingreso rápido",
@@ -143,7 +157,7 @@ fun QuickInputSection() {
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-            text = "Registra diagnósticos de plagas, malezas y otros datos en el momento.",
+            text = "Registra datos en el momento.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -155,21 +169,47 @@ fun QuickInputSection() {
             QuickInputCard(
                 label = "Añada nuevo\ncultivo",
                 icon = Icons.Default.Add,
-                onClick = { /* TODO */ }
-            )
-            QuickInputCard(
-                label = "Estado\nfenológico",
-                icon = Icons.Default.Eco, // placeholders
-                onClick = { /* TODO */ }
-            )
-            QuickInputCard(
-                label = "Plagas y\nenfermedades",
-                icon = Icons.Default.BugReport, // placeholders
-                onClick = { /* TODO */ }
+                onClick = { showDialog = true }
             )
         }
     }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Agregar nuevo cultivo") },
+            text = {
+                Column {
+                    Text("Ingrese el nombre del cultivo:")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextField(
+                        value = newCropName,
+                        onValueChange = { newCropName = it },
+                        placeholder = { Text("Ej. Tomate") }
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    if (newCropName.isNotBlank()) {
+                        userViewModel.addCrop(newCropName.trim())
+                        newCropName = ""
+                        showDialog = false
+                    }
+                }) {
+                    Text("Agregar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 }
+
+
 
 @Composable
 fun QuickInputCard(label: String, icon: ImageVector, onClick: () -> Unit) {
@@ -277,4 +317,3 @@ fun PhotoInstructionCard(number: String, instruction: String, imageRes: Int) {
         }
     }
 }
-

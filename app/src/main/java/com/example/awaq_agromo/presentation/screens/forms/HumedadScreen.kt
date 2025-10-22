@@ -15,10 +15,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.awaq_agromo.R
 import com.example.awaq_agromo.data.local.store.HumedadLocalStore
 import com.example.awaq_agromo.presentation.component.ui.HorizontalDotBar
 import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
+import com.example.awaq_agromo.presentation.viewmodel.HumedadViewModel
 import kotlinx.coroutines.launch
 import kotlin.collections.forEach
 import kotlin.let
@@ -32,10 +35,12 @@ import kotlin.text.toIntOrNull
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HumedadScreen(
-    onNext: (() -> Unit)? = null
+    navController: NavController
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
+    val humedadViewModel: HumedadViewModel = hiltViewModel()
 
     // Colores de la app
     val bgScreen = Color(0xFFF4F8EF)
@@ -43,6 +48,10 @@ fun HumedadScreen(
     val textSecondary = Color(0xFF424842)
     val borderSoft = Color(0xFFBBD8A8)
     val accent = PrincipalPrimary
+
+    var selectedDesc by remember { mutableStateOf("Manual") } // description: manual or sensor
+    var selectedValue by remember { mutableStateOf("") }
+    val valueInt = selectedValue.toIntOrNull() ?: 0
 
     // Persistencia local (DataStore)
     val savedManual by HumedadLocalStore.readManualScale(context).collectAsState(initial = null)
@@ -193,7 +202,8 @@ fun HumedadScreen(
             // CTA
             Spacer(Modifier.height(18.dp))
             Button(
-                onClick = { onNext?.invoke() },
+                onClick = { humedadViewModel.saveHumedad(selectedDesc, valueInt)
+                    navController.navigate("ph")  },
                 enabled = manualScale.isNotBlank() || (sensorValue.toIntOrNull()?.let { it in 0..100 } == true),
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 10.dp)
@@ -213,8 +223,3 @@ fun HumedadScreen(
 
 /* ---------------- Preview ---------------- */
 
-@Preview(showBackground = true, backgroundColor = 0xFFF4F8EF, widthDp = 360)
-@Composable
-private fun HumedadScreenPreview() {
-    MaterialTheme { HumedadScreen(onNext = null) }
-}

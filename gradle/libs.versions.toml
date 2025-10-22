@@ -19,6 +19,8 @@ runtimeVersion = "1.9.3"
 hill = "2.57.1"
 hiltNavigationCompose = "1.2.0"
 ksp = "2.2.10-2.0.2"
+media3CommonKtx = "1.8.0"
+roomKtx = "2.8.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,6 +48,8 @@ runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = 
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hill" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hill" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 
 
 [plugins]

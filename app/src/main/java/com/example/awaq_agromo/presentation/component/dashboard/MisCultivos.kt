@@ -1,33 +1,30 @@
 package com.example.awaq_agromo.presentation.component.dashboard
 
-import androidx.compose.foundation.Image
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.awaq_agromo.presentation.screens.dashboard.CropItem
+import com.example.awaq_agromo.presentation.theme.Primary900
+import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
 import com.example.awaq_agromo.presentation.theme.PrincipalSecondary
 
-
 @Composable
-fun MisCultivos(crops: List<CropItem>) {
+fun MisCultivos(crops: List<String>) {
+
+    Log.d("MisCultivos", "Crops list: $crops") // debug level log
+
+
     Column {
         Text(
             text = "Mis cultivos",
@@ -36,40 +33,49 @@ fun MisCultivos(crops: List<CropItem>) {
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-            text = "Acceda y gestione tus cultivos",
+            text = "Accede y gestiona tus cultivos",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(Modifier.height(16.dp))
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items(crops) { crop ->
-                CropIcon(crop.iconRes, crop.description)
+
+        if (crops.isEmpty()) {
+            Text(
+                text = "Empieza seleccionando tus cultivos para personalizar tu experiencia",
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = PrincipalPrimary, // Material green 500
+            )
+        } else {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(crops) { cropName ->
+                    CropNameChip(cropName)
+                }
             }
         }
     }
 }
-
 @Composable
-fun CropIcon(iconRes: Int, description: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(
-            modifier = Modifier
-                .size(64.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .border(width = 4.dp, color = PrincipalSecondary, shape = CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = iconRes),
-                contentDescription = description,
-                modifier = Modifier.size(42.dp)
-            )
-        }
-        Spacer(Modifier.height(4.dp))
-        Text(text = description, style = MaterialTheme.typography.labelSmall)
+fun CropNameChip(name: String) {
+    Box(
+        modifier = Modifier
+            .widthIn(min = 120.dp)       // slightly smaller width
+            .heightIn(min = 40.dp)       // slightly smaller height
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)) // light green background
+            .border(4.dp, PrincipalSecondary, RoundedCornerShape(20.dp))
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
+            color = Primary900
+        )
     }
 }
+
