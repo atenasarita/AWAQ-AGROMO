@@ -55,6 +55,8 @@ val sampleInformesRecientes: List<InformeData> = listOf(
 fun DashboardScreen(
     navController: NavController,
     userViewModel: UserViewModel = hiltViewModel(),
+    onPhotoClick: () -> Unit = {}
+   // weatherViewModel: WeatherViewModel = hiltViewModel()
 ) {
 
     val user by userViewModel.user.collectAsState()
@@ -247,7 +249,7 @@ fun QuickInputCard(label: String, icon: ImageVector, onClick: () -> Unit) {
 }
 
 @Composable
-fun CropPhotosSection() {
+fun CropPhotosSection(onPhotoClick: () -> Unit = {}) {
     Column {
         Text(
             text = "Fotografía de tus cultivos",
@@ -270,7 +272,7 @@ fun CropPhotosSection() {
         }
         Spacer(Modifier.height(16.dp))
         Button(
-            onClick = { /* TODO: Take photo */ },
+            onClick = onPhotoClick,
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = PrincipalPrimary),
