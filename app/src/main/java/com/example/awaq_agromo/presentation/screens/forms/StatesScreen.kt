@@ -3,9 +3,16 @@ package com.example.awaq_agromo.presentation.screens.forms
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -13,62 +20,55 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.awaq_agromo.R
-import com.example.awaq_agromo.data.local.store.HumedadLocalStore
+import com.example.awaq_agromo.data.local.store.StatesLocalStore
 import com.example.awaq_agromo.presentation.component.ui.HorizontalDotBar
 import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
 import kotlinx.coroutines.launch
-import kotlin.collections.forEach
-import kotlin.let
-import kotlin.text.all
-import kotlin.text.isDigit
-import kotlin.text.isEmpty
-import kotlin.text.isNotBlank
-import kotlin.text.take
-import kotlin.text.toIntOrNull
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HumedadScreen(
+fun StatesScreen(
     onNext: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    // Colores de la app
     val bgScreen = Color(0xFFF4F8EF)
     val textPrimary = Color(0xFF1D1D1D)
     val textSecondary = Color(0xFF424842)
     val borderSoft = Color(0xFFBBD8A8)
     val accent = PrincipalPrimary
 
-    // Persistencia local (DataStore)
-    val savedManual by HumedadLocalStore.readManualScale(context).collectAsState(initial = null)
-    val savedSensor by HumedadLocalStore.readSensorValue(context).collectAsState(initial = null)
+    val savedState by StatesLocalStore.readPlantState(context).collectAsState(initial = "")
+    val savedNotes by StatesLocalStore.readObservations(context).collectAsState(initial = "")
 
-    var manualExpanded by remember { mutableStateOf(false) }
-    var manualScale by remember { mutableStateOf(savedManual ?: "") }
-    var sensorValue by remember { mutableStateOf(savedSensor ?: "") }
-    var sensorError by remember { mutableStateOf<String?>(null) }
+    var plantState by remember { mutableStateOf(savedState) }
+    var observations by remember { mutableStateOf(savedNotes) }
+    var expanded by remember { mutableStateOf(false) }
 
-    // Opciones de escala
-    val scaleOptions = listOf("Muy seco", "Seco", "Medio", "Húmedo", "Muy húmedo")
+    val stateOptions = listOf(
+        "Semilla",
+        "Germinación",
+        "Desarrollo vegetativo",
+        "Maduración"
+    )
 
     Surface(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .background(bgScreen),
         color = bgScreen
     ) {
         Column(Modifier.fillMaxSize()) {
-
-            // Encabezado y progreso
             Spacer(Modifier.height(16.dp))
             Column(Modifier.padding(horizontal = 16.dp)) {
                 Text(
-                    "Suelo y condiciones",
+                    "Desarrollo de la planta",
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
                     color = textPrimary
                 )
@@ -79,53 +79,48 @@ fun HumedadScreen(
                     color = textSecondary
                 )
                 Spacer(Modifier.height(10.dp))
-                HorizontalDotBar(n = 11, k = 3, modifier = Modifier.fillMaxWidth())
+                HorizontalDotBar(n = 13, k = 5, modifier = Modifier.fillMaxWidth())
             }
-
-            // Sección principal
             Spacer(Modifier.height(16.dp))
             Column(Modifier.padding(horizontal = 16.dp)) {
                 Text(
-                    "Humedad del suelo",
+                    "Estado fenológico de la planta",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = textPrimary
                 )
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    "Ingresar la humedad en la escala si es manualmente o anote el valor si posee un sensor.",
+                    "Seleccione una opción en el menú desplegable de a continuación. Puede añadir comentarios adicionales en “observaciones”.",
                     style = MaterialTheme.typography.bodySmall,
                     color = textSecondary
                 )
             }
 
-            // Imagen decorativa
             Spacer(Modifier.height(12.dp))
             Image(
-                painter = painterResource(id = R.drawable.suelo), // coloca suelo.png en res/drawable
-                contentDescription = "Humedad del suelo",
+                painter = painterResource(id = R.drawable.plant_states),
+                contentDescription = "Estado fenológico de la planta",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp)
+                    .height(230.dp)
                     .padding(horizontal = 36.dp)
                     .clip(RoundedCornerShape(16.dp)),
                 contentScale = ContentScale.Fit
             )
 
-            // Registro manual (dropdown)
             Spacer(Modifier.height(16.dp))
-            Column(Modifier.padding(horizontal = 16.dp)) {
-                Text("Registro manual", color = textSecondary, style = MaterialTheme.typography.bodySmall)
-                Spacer(Modifier.height(6.dp))
+            Column(Modifier.padding(horizontal = 16.dp)) { Spacer(Modifier.height(6.dp))
+
                 ExposedDropdownMenuBox(
-                    expanded = manualExpanded,
-                    onExpandedChange = { manualExpanded = it }
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it }
                 ) {
                     OutlinedTextField(
-                        value = manualScale,
-                        onValueChange = { /* readOnly */ },
+                        value = plantState,
+                        onValueChange = {},
                         readOnly = true,
-                        placeholder = { Text("Indique humedad") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = manualExpanded) },
+                        placeholder = { Text("Estado fenológico") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                         singleLine = true,
                         shape = RoundedCornerShape(14.dp),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -138,16 +133,16 @@ fun HumedadScreen(
                             .fillMaxWidth()
                     )
                     ExposedDropdownMenu(
-                        expanded = manualExpanded,
-                        onDismissRequest = { manualExpanded = false }
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
                     ) {
-                        scaleOptions.forEach { opt ->
+                        stateOptions.forEach { opt ->
                             DropdownMenuItem(
                                 text = { Text(opt) },
                                 onClick = {
-                                    manualScale = opt
-                                    manualExpanded = false
-                                    scope.launch { HumedadLocalStore.saveManualScale(context, opt) }
+                                    plantState = opt
+                                    expanded = false
+                                    scope.launch { StatesLocalStore.savePlantState(context, opt) }
                                 }
                             )
                         }
@@ -155,46 +150,35 @@ fun HumedadScreen(
                 }
             }
 
-            // Registro con sensor
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(16.dp))
             Column(Modifier.padding(horizontal = 16.dp)) {
-                Text("Registro con sensor digital", color = textSecondary, style = MaterialTheme.typography.bodySmall)
+                Text("Observaciones", color = textSecondary, style = MaterialTheme.typography.bodySmall)
                 Spacer(Modifier.height(6.dp))
+
                 OutlinedTextField(
-                    value = sensorValue,
-                    onValueChange = { v ->
-                        // Solo números y rango 0..100
-                        if (v.isEmpty() || v.all { it.isDigit() }) {
-                            val trimmed = v.take(3)
-                            sensorValue = trimmed
-                            sensorError = trimmed.toIntOrNull()?.let { if (it in 0..100) null else "Debe estar entre 0 y 100" }
-                            if (sensorError == null) {
-                                scope.launch { HumedadLocalStore.saveSensorValue(context, trimmed) }
-                            }
-                        }
+                    value = observations,
+                    onValueChange = {
+                        observations = it
+                        scope.launch { StatesLocalStore.saveObservations(context, it) }
                     },
-                    isError = sensorError != null,
-                    supportingText = {
-                        if (sensorError != null) Text(sensorError!!, color = Color(0xFF8B0000))
-                    },
-                    placeholder = { Text("Valor exacto en %") },
-                    singleLine = true,
+                    placeholder = { Text("Notas") },
+                    minLines = 9,
                     shape = RoundedCornerShape(14.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = accent,
                         unfocusedBorderColor = borderSoft,
                         cursorColor = accent
                     ),
-                    suffix = { Text("%") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 100.dp)
                 )
             }
 
-            // CTA
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(20.dp))
             Button(
                 onClick = { onNext?.invoke() },
-                enabled = manualScale.isNotBlank() || (sensorValue.toIntOrNull()?.let { it in 0..100 } == true),
+                enabled = plantState.isNotBlank(),
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 10.dp)
                     .fillMaxWidth()
@@ -211,10 +195,8 @@ fun HumedadScreen(
     }
 }
 
-/* ---------------- Preview ---------------- */
-
-@Preview(showBackground = true, backgroundColor = 0xFFF4F8EF, widthDp = 360)
+@Preview(showBackground = true, backgroundColor = 0xFFF4F8EF)
 @Composable
-private fun HumedadScreenPreview() {
-    MaterialTheme { HumedadScreen(onNext = null) }
+private fun PreviewStatesScreen() {
+    MaterialTheme { StatesScreen() }
 }

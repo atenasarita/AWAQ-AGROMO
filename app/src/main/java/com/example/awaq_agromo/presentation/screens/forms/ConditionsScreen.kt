@@ -42,12 +42,13 @@ import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
 import kotlin.collections.forEach
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConditionsScreen(
-    onOnboardingClick: () -> Unit = {}, // placeholder para boton de siguiente pantalla
     selectedOption: String,
-    onOptionSelected: (String) -> Unit
+    onOptionSelected: (String) -> Unit,
+    onOnboardingClick: () -> Unit = {}
 ) {
     var selectedOption by remember { mutableStateOf("Nivel de fertilidad") }
     var expanded by remember { mutableStateOf(false) }

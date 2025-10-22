@@ -1,9 +1,15 @@
 package com.example.awaq_agromo.presentation.component.buttons
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -20,6 +26,8 @@ fun PrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    containerColor: Color = Primary900,
+    contentColor: Color = Color.White,
     enabled: Boolean = true
 ) {
     Button(
@@ -28,8 +36,8 @@ fun PrimaryButton(
             .fillMaxWidth()
             .height(56.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Primary900,
-            contentColor = Color.White
+            containerColor = containerColor,
+            contentColor = contentColor
         ),
         shape = MaterialTheme.shapes.medium,
         enabled = enabled
@@ -68,6 +76,34 @@ fun SecondaryButton(
             text = text,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
+        )
+    }
+}
+
+@Composable
+fun BackButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    containerColor: Color = Primary900,
+    contentColor: Color = Color.White,
+    enabled: Boolean = true
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier
+            .height(56.dp)
+            .border(1.dp, Primary900, RoundedCornerShape(16.dp)),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        ),
+        shape = MaterialTheme.shapes.medium,
+        enabled = enabled
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp)
         )
     }
 }

@@ -8,6 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -24,6 +27,15 @@ import com.example.awaq_agromo.presentation.component.ui.items
 import com.example.awaq_agromo.presentation.screens.camera.Analysis.AnalysisScreen
 import com.example.awaq_agromo.presentation.screens.camera.PhotoScreen
 import com.example.awaq_agromo.presentation.screens.dashboard.DashboardScreen
+import com.example.awaq_agromo.presentation.screens.forms.ConditionsScreen
+import com.example.awaq_agromo.presentation.screens.forms.FoliageScreen
+import com.example.awaq_agromo.presentation.screens.forms.HumedadScreen
+import com.example.awaq_agromo.presentation.screens.forms.MalezaScreen
+import com.example.awaq_agromo.presentation.screens.forms.MonitoreoScreen
+import com.example.awaq_agromo.presentation.screens.forms.PlagueScreen
+import com.example.awaq_agromo.presentation.screens.forms.SicknessScreen
+import com.example.awaq_agromo.presentation.screens.forms.StatesScreen
+import com.example.awaq_agromo.presentation.screens.forms.VariedadScreen
 import com.example.awaq_agromo.presentation.screens.login.LoginScreen
 import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_1Screen
 import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_2Screen
@@ -72,7 +84,6 @@ fun AppNavigation(
             )
         }
 
-        // 🟢 Onboarding screens
         composable("Onboarding_1") {
             Onboarding_Page_1Screen(
                 onNextOnboardingPage2 = { navController.navigate("Onboarding_2") }
@@ -92,6 +103,7 @@ fun AppNavigation(
                 }
             )
         }
+
 
         composable("main_host") {
             MainScreenHost(navController = navController)
@@ -155,11 +167,93 @@ fun MainScreenHost(navController: NavHostController) {
             }
 
             composable(NavItem.Monitoreo.route) {
-                Text("Placeholder de Monitoreo Screen", modifier = Modifier.fillMaxSize())
+                MonitoreoScreen(
+                    onNext = {
+                        bottomNavController.navigate("variedades")
+                    }
+                )
             }
+
+            composable("variedades"){
+                VariedadScreen(
+                    onNext = {
+                        bottomNavController.navigate("humedad")
+                    }
+                )
+            }
+
+            composable("humedad"){
+                HumedadScreen(
+                    onNext = {
+                        bottomNavController.navigate("conditions")
+                    }
+                )
+            }
+
+
+            composable("conditions") {
+                var selectedOption by remember { mutableStateOf("") }
+
+                ConditionsScreen(
+                    selectedOption = selectedOption,
+                    onOptionSelected = { selectedOption = it },
+                    onOnboardingClick = {
+                        bottomNavController.navigate("states")
+                    }
+                )
+            }
+
+            composable("states"){
+                StatesScreen(
+                    onNext = {
+                        bottomNavController.navigate("foliage")
+                    }
+                )
+            }
+
+            composable("foliage"){
+                FoliageScreen(
+                    onNext = {
+                        bottomNavController.navigate("plagas")
+                    }
+                )
+            }
+
+            composable("plagas"){
+                PlagueScreen(
+                    onNext = {
+                        bottomNavController.navigate("enfermedades")
+                    }
+                )
+            }
+
+            composable("enfermedades"){
+                SicknessScreen(
+                    onNext = {
+                        bottomNavController.navigate("maleza")
+                    }
+                )
+            }
+
+            composable("maleza") {
+                MalezaScreen(
+                    navController = bottomNavController,
+                    onPhotoClick = {
+                        bottomNavController.navigate("photo_screen")
+                    },
+                    onBackPressed = {
+                        bottomNavController.popBackStack()
+                    },
+                    onDashboardClick = {
+                        bottomNavController.navigate("dashboard")
+                    }
+                )
+            }
+
             composable(NavItem.Comunidad.route) {
                 Text("Placeholder de Comunidad Screen", modifier = Modifier.fillMaxSize())
             }
+
             composable(NavItem.Perfil.route) {
                 PerfilScreen(navController = navController)
             }
