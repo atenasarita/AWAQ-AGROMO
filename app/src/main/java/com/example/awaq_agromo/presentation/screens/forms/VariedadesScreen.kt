@@ -15,6 +15,8 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.*
+import androidx.compose.material3.CheckboxColors
+import androidx.compose.material3.CheckboxDefaults.colors
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -25,14 +27,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.util.Log
+import androidx.media3.common.util.UnstableApi
 import com.example.awaq_agromo.R
 import com.example.awaq_agromo.presentation.component.ui.HorizontalDotBar
 import com.example.awaq_agromo.presentation.theme.PrincipalPrimary
 import kotlinx.coroutines.launch
 import com.example.awaq_agromo.data.local.store.CropLocalStore
-import kotlinx.coroutines.launch
+import com.example.awaq_agromo.presentation.viewmodel.UserViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -48,32 +52,32 @@ import kotlin.text.isNullOrBlank
 import kotlin.text.lowercase
 import kotlin.text.trim
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VariedadScreen(
+    userViewModel: UserViewModel = hiltViewModel(),
     onNext: (() -> Unit)? = null
 ) {
+    val user by userViewModel.user.collectAsState()
+    val userId = user?.id
+    val crops by userViewModel.crops.collectAsState()
+
+    LaunchedEffect(Unit) {
+        userViewModel.fetchCurrentUser()  // ensures user is loaded
+    }
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    // Colores de tu app
+    // Estados persistidos
+    val savedDate by CropLocalStore.readSowingDate(context).collectAsState(initial = null)
+
     val bgScreen = Color(0xFFF4F8EF)
     val textPrimary = Color(0xFF1D1D1D)
     val textSecondary = Color(0xFF424842)
     val borderSoft = Color(0xFFBBD8A8)
     val accent = PrincipalPrimary
-
-    // Lista base
-    val baseCrops = remember {
-        listOf(
-            "Algodón", "Arroz", "Café", "Cacao", "Cebada", "Maíz", "Trigo",
-            "Sorgo", "Papa", "Frijol", "Aguacate", "Caña de azúcar", "Cítricos"
-        )
-    }
-
-    // Estados persistidos
-    val selected by CropLocalStore.readSelected(context).collectAsState(initial = emptySet())
-    val savedDate by CropLocalStore.readSowingDate(context).collectAsState(initial = null)
 
     // Estados locales
     var query by remember { mutableStateOf("") }
@@ -81,15 +85,21 @@ fun VariedadScreen(
     var openDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
 
-    // Rellenar fecha guardada
+    // Log userId to debug
+    LaunchedEffect(userId) {
+        Log.d("VariedadesScreen", "Current userId: $userId")
+        if (userId != null) {
+            userViewModel.loadCropsForUser(userId)
+        }
+    }
+
     LaunchedEffect(savedDate) {
         if (!savedDate.isNullOrBlank()) sowingDateText = savedDate!!
     }
 
-    // Filtrado simple
-    val filtered = remember(query, baseCrops, selected) {
+    val filtered = remember(query, crops) {
         val q = query.trim().lowercase()
-        if (q.isEmpty()) baseCrops else baseCrops.filter { it.lowercase().contains(q) }
+        if (q.isEmpty()) crops.toList() else crops.filter { it.lowercase().contains(q) }
     }
 
     Surface(
@@ -127,7 +137,6 @@ fun VariedadScreen(
                 )
             }
 
-            // Imagen decorativa 🌾
             Spacer(Modifier.height(16.dp))
             Image(
                 painter = painterResource(id = R.drawable.agri),
@@ -141,8 +150,6 @@ fun VariedadScreen(
             )
 
             Spacer(Modifier.height(20.dp))
-
-            // Búsqueda y agregar manualmente
             Column(Modifier.padding(horizontal = 16.dp)) {
                 Text(
                     "Seleccione el cultivo de la lista o ingréselo manualmente.",
@@ -166,32 +173,28 @@ fun VariedadScreen(
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(Modifier.width(8.dp))
-                    Button(
-                        onClick = {
-                            val clean = query.trim()
-                            if (clean.isNotEmpty()) {
-                                scope.launch { CropLocalStore.addOne(context, clean) }
-                                query = ""
-                            }
-                        },
-                        shape = RoundedCornerShape(14.dp),
+                    Button(onClick = {
+                        val clean = query.trim()
+                        if (clean.isNotEmpty() && userId != null) {
+                            userViewModel.addCrop(clean)
+                            query = ""
+                        }
+                    },
                         colors = ButtonDefaults.buttonColors(containerColor = accent)
                     ) { Text("Agregar") }
                 }
             }
 
-            // Chips seleccionadas
-            AnimatedVisibility(visible = selected.isNotEmpty()) {
+            AnimatedVisibility(visible = crops.isNotEmpty()) {
                 FlowRowChips(
-                    items = selected.toList(),
+                    items = crops.toList(),
                     accent = accent,
                     textPrimary = textPrimary,
                     borderSoft = borderSoft,
-                    onRemove = { name -> scope.launch { CropLocalStore.removeOne(context, name) } }
+                    onRemove = { name -> if (userId != null) userViewModel.removeCrop(name) }
                 )
             }
 
-            // Lista con checkboxes
             Spacer(Modifier.height(6.dp))
             Box(
                 modifier = Modifier
@@ -205,7 +208,7 @@ fun VariedadScreen(
                     items(filtered, key = { it }) { item ->
                         CropCheckRow(
                             name = item,
-                            checked = selected.contains(item),
+                            checked = crops.contains(item),
                             onToggle = { scope.launch { CropLocalStore.toggle(context, item) } },
                             textPrimary = textPrimary,
                             borderSoft = borderSoft
@@ -264,11 +267,10 @@ fun VariedadScreen(
                 ) { DatePicker(state = datePickerState) }
             }
 
-            // Footer CTA
             Spacer(Modifier.height(10.dp))
             Button(
                 onClick = { onNext?.invoke() },
-                enabled = selected.isNotEmpty(),
+                enabled = crops.isNotEmpty(),
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 10.dp)
                     .fillMaxWidth()
@@ -361,11 +363,7 @@ private fun Chip(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF4F8EF, widthDp = 360)
-@Composable
-private fun VariedadScreenPreview() {
-    MaterialTheme { VariedadScreen() }
-}
+
 
 private fun Long.toDateText(): String {
     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())

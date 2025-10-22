@@ -17,19 +17,27 @@ import com.example.awaq_agromo.presentation.component.texts.AgromoTextField
 import com.example.awaq_agromo.presentation.theme.Primary50
 import com.example.awaq_agromo.presentation.theme.AgromoTheme
 import com.example.awaq_agromo.presentation.viewmodel.LoginState
-
 import com.example.awaq_agromo.presentation.viewmodel.LoginViewModel
 
 @Composable
 fun LoginScreen(
+    viewModel: LoginViewModel,
     onDashboardClick: () -> Unit,
-    viewModel: LoginViewModel
+    registrationMessage: String? = null
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val state by viewModel.state.collectAsState()
-
     val isFormValid = email.isNotBlank() && password.isNotBlank()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // Show onboarding success message if provided
+    LaunchedEffect(registrationMessage) {
+        if (!registrationMessage.isNullOrEmpty()) {
+            snackbarHostState.showSnackbar(registrationMessage)
+        }
+    }
 
     // React to login success
     LaunchedEffect(state) {
@@ -39,18 +47,17 @@ fun LoginScreen(
     }
 
     AgromoTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Primary50)
-                .padding(horizontal = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            containerColor = Primary50
+        ) { paddingValues -> // ✅ now paddingValues is used
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp, vertical = 32.dp),
+                    .background(Primary50)
+                    .padding(paddingValues)
+                    .padding(horizontal = 24.dp)
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AgromoLogo(modifier = Modifier.padding(bottom = 24.dp))
