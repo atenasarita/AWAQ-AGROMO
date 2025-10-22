@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -31,6 +32,7 @@ import com.example.awaq_agromo.presentation.screens.welcome.WelcomeScreen
 import com.example.awaq_agromo.presentation.screens.forms.ConditionsScreen
 import com.example.awaq_agromo.presentation.screens.forms.DevelopmentScreen
 import com.example.awaq_agromo.presentation.screens.forms.FoliageScreen
+import com.example.awaq_agromo.presentation.screens.forms.MalezaScreen
 import com.example.awaq_agromo.presentation.screens.forms.PlagueScreen
 import com.example.awaq_agromo.presentation.screens.forms.SicknessScreen
 import com.example.awaq_agromo.presentation.screens.forms.StatesScreen
@@ -114,6 +116,24 @@ fun AppNavigation(navController: NavHostController) {
 
         composable("photo_screen") {
             PhotoScreen(navController = navController)
+        }
+
+        composable("malezas") {
+            val context = LocalContext.current
+
+            MalezaScreen(
+                navController = navController,
+                onPhotoClick = {
+                    navController.navigate("photo_screen/formulario")
+                },
+                onDashboardClick = {
+                    navController.navigate("main_host") {
+                        popUpTo("welcome") { inclusive = true }
+                    }
+                },
+                onBackPressed = { navController.popBackStack() },
+                context = context
+            )
         }
 
         composable(

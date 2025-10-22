@@ -6,7 +6,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,12 +38,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.example.awaq_agromo.presentation.component.buttons.BackButton
 import com.example.awaq_agromo.presentation.component.buttons.CheckBoxItem
 import com.example.awaq_agromo.presentation.component.buttons.OptionItem
@@ -55,6 +50,10 @@ import com.example.awaq_agromo.presentation.component.texts.SubtitleText
 import com.example.awaq_agromo.presentation.theme.Primary900
 import androidx.core.net.toUri
 import com.example.awaq_agromo.presentation.theme.AgromoTheme
+import android.content.Context
+import androidx.compose.runtime.rememberCoroutineScope
+import com.example.awaq_agromo.data.local.store.MalezasLocalStore
+import kotlinx.coroutines.launch
 
 @Composable
 fun MalezaScreen(
@@ -62,7 +61,9 @@ fun MalezaScreen(
     onPhotoClick: () -> Unit,
     onBackPressed: () -> Unit,
     onDashboardClick: () -> Unit,
+    context: Context
 ) {
+    val scope = rememberCoroutineScope()
     // Estados para las opciones Sí/No
     var tieneMalezas by remember { mutableStateOf(true) }
 
@@ -461,38 +462,32 @@ fun MalezaScreen(
                         modifier = Modifier.weight(1f),
                         text = "Finalizar",
                         onClick = {
-                            // Aquí puedes guardar todos los datos recopilados
-                            // Por ejemplo, enviarlos a un ViewModel, base de datos, etc.
-                            val datosMalezas = DatosMalezas(
-                                tieneMalezas = tieneMalezas,
-                                tiposMaleza = listOf(
-                                    "hojaAncha" to hojaAncha,
-                                    "rastreraTrepadora" to rastreraTrepadora,
-                                    "otraNoSe" to otraNoSe,
-                                    "hojaAngosta" to hojaAngosta,
-                                    "arbustivaAlta" to arbustivaAlta,
-                                    "ningunaTipo" to ningunaTipo
-                                ),
-                                porcentajeArea = porcentajeArea.toInt(),
-                                concentracion = listOf(
-                                    "enLosBordes" to enLosBordes,
-                                    "enZonasDispersas" to enZonasDispersas,
-                                    "enElCentro" to enElCentro,
-                                    "enTodoElCultivo" to enTodoElCultivo
-                                ),
-                                controlesAplicados = listOf(
-                                    "controlManual" to controlManual,
-                                    "controlQuimico" to controlQuimico,
-                                    "controlCobertura" to controlCobertura,
-                                    "noControl" to noControl
+                            // GUARDAR LOS DATOS EN EL LOCAL STORE
+                            scope.launch {
+                                MalezasLocalStore.saveMalezasData(
+                                    ctx = context,
+                                    tieneMalezas = tieneMalezas,
+                                    hojaAncha = hojaAncha,
+                                    rastreraTrepadora = rastreraTrepadora,
+                                    otraNoSe = otraNoSe,
+                                    hojaAngosta = hojaAngosta,
+                                    arbustivaAlta = arbustivaAlta,
+                                    ningunaTipo = ningunaTipo,
+                                    porcentajeArea = porcentajeArea,
+                                    enLosBordes = enLosBordes,
+                                    enZonasDispersas = enZonasDispersas,
+                                    enElCentro = enElCentro,
+                                    enTodoElCultivo = enTodoElCultivo,
+                                    controlManual = controlManual,
+                                    controlQuimico = controlQuimico,
+                                    controlCobertura = controlCobertura,
+                                    noControl = noControl,
+                                    imageUri = selectedImageUri?.toString()
                                 )
-                            )
-
-                            // Procesar los datos como necesites
-                            procesarDatosMalezas(datosMalezas)
+                            }
 
                             // Navegar a la siguiente pantalla
-                            onDashboardClick
+                            onDashboardClick()
                         }
                     )
                 }
@@ -504,19 +499,4 @@ fun MalezaScreen(
             }
         }
     }
-}
-
-// Data class para guardar todos los datos de malezas
-data class DatosMalezas(
-    val tieneMalezas: Boolean,
-    val tiposMaleza: List<Pair<String, Boolean>>,
-    val porcentajeArea: Int,
-    val concentracion: List<Pair<String, Boolean>>,
-    val controlesAplicados: List<Pair<String, Boolean>>
-)
-
-// Función para procesar los datos (puedes adaptarla según tus necesidades)
-fun procesarDatosMalezas(datos: DatosMalezas) {
-    // Aquí puedes guardar en ViewModel, base de datos, enviar a API, etc.
-    println("Datos de malezas guardados: $datos")
 }
