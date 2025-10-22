@@ -28,6 +28,12 @@ import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_3
 import com.example.awaq_agromo.presentation.screens.perfil.PerfilScreen
 import com.example.awaq_agromo.presentation.screens.registration.RegistrationScreen
 import com.example.awaq_agromo.presentation.screens.welcome.WelcomeScreen
+import com.example.awaq_agromo.presentation.screens.forms.ConditionsScreen
+import com.example.awaq_agromo.presentation.screens.forms.DevelopmentScreen
+import com.example.awaq_agromo.presentation.screens.forms.FoliageScreen
+import com.example.awaq_agromo.presentation.screens.forms.PlagueScreen
+import com.example.awaq_agromo.presentation.screens.forms.SicknessScreen
+import com.example.awaq_agromo.presentation.screens.forms.StatesScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
@@ -76,6 +82,30 @@ fun AppNavigation(navController: NavHostController) {
                     }
                 }
             )
+        }
+
+
+        composable("development") {
+            DevelopmentScreen(onNext = {navController.navigate("states")})
+        }
+
+        composable("states") {
+            StatesScreen(onNext = {navController.navigate("foliage")})
+        }
+
+        composable("foliage") {
+            FoliageScreen(onNext = {navController.navigate("plague")})
+        }
+
+        composable("plague") {
+            PlagueScreen(onNext = {navController.navigate("sickness")})
+        }
+
+        composable("sickness") {
+            SicknessScreen()
+        }
+        composable("conditions") {
+            ConditionsScreen(onNext = {navController.navigate("development")})
         }
 
         composable("main_host") {
