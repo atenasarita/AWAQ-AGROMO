@@ -101,6 +101,7 @@ fun ConditionsScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // ---- UBICACIÓN Y CLIMA ----
+            /*
             SectionTitle("Ubicación y clima")
             Text(
                 text = "Ubicación de el cultivo y condiciones climaticas al momento de toma de datos.",
@@ -142,6 +143,7 @@ fun ConditionsScreen(
             Spacer(modifier = Modifier.height(20.dp))
             HorizontalDivider(Modifier, DividerDefaults.Thickness, color = Color.LightGray)
             Spacer(modifier = Modifier.height(20.dp))
+            */
 
             // ---- FERTILIDAD DEL SUELO ----
             SectionTitle("Fertilidad del suelo")

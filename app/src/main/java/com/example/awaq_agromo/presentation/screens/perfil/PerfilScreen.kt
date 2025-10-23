@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,8 +39,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -171,6 +176,8 @@ fun PerfilScreen(
 
                 Spacer(modifier = Modifier.weight(1f))
 
+                var settingsExpanded by remember { mutableStateOf(false) }
+
                 // Settings Icon with dropdown menu
                 IconButton(
                     onClick = { settingsExpanded = true }
@@ -185,13 +192,14 @@ fun PerfilScreen(
 
                 DropdownMenu(
                     expanded = settingsExpanded,
-                    onDismissRequest = { settingsExpanded = false }
+                    onDismissRequest = { settingsExpanded = false },
+                    offset = DpOffset(x = (-100).dp, y = (-50).dp) // Ajusta estos valores
                 ) {
                     DropdownMenuItem(
                         text = { Text("Log Out") },
                         onClick = {
                             settingsExpanded = false
-                            userViewModel.logout() // clear user session
+                            userViewModel.logout()
                             navController.navigate("welcome") {
                                 popUpTo(navController.graph.startDestinationId) {
                                     inclusive = true
