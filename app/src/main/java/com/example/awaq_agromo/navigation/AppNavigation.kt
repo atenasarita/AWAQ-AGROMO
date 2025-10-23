@@ -26,6 +26,7 @@ import com.example.awaq_agromo.data.local.DataStoreManager
 import com.example.awaq_agromo.presentation.component.ui.BottomBar
 import com.example.awaq_agromo.presentation.component.ui.NavItem
 import com.example.awaq_agromo.presentation.component.ui.items
+import com.example.awaq_agromo.presentation.screens.Comunidad.ComunidadScreen
 import com.example.awaq_agromo.presentation.screens.camera.Analysis.AnalysisScreen
 import com.example.awaq_agromo.presentation.screens.camera.PhotoScreen
 import com.example.awaq_agromo.presentation.screens.dashboard.DashboardScreen
@@ -346,7 +347,7 @@ fun MainScreenHost(navController: NavHostController) {
             }
 
             composable(NavItem.Comunidad.route) {
-                Text("Placeholder de Comunidad Screen", modifier = Modifier.fillMaxSize())
+                ComunidadScreen(onBackClick = {bottomNavController.popBackStack()})
             }
 
             composable(NavItem.Perfil.route) {
