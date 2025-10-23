@@ -168,7 +168,8 @@ fun PhScreen(
                     imageRes = R.drawable.manual,
                     onClick = {
                         method = "Manual"
-                        scope.launch { PhLocalStore.savePhMethod(context, method) }
+                        scope.launch { PhLocalStore.savePhMethod(context, method); onManualClick?.invoke()
+                        }
                     },
                     accent = accent
                 )

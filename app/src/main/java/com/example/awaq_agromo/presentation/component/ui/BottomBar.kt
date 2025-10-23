@@ -60,9 +60,9 @@ fun BottomBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 6.dp, vertical = 0.dp)
             .height(bottomBarHeight)
-            .background(Primary300, RoundedCornerShape(32.dp)),
+            .background(Primary300, RoundedCornerShape(32.dp))
+            .padding(horizontal = 6.dp),
         verticalAlignment = Alignment.Bottom
     ) {
         items.forEach { item ->

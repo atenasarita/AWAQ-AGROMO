@@ -258,7 +258,6 @@ fun MainScreenHost(navController: NavHostController) {
                 )
             }
 
-
             composable("humedad") { backStackEntry ->
                 HumedadScreen(
                     onNext = { bottomNavController.navigate("ph")}
@@ -273,7 +272,7 @@ fun MainScreenHost(navController: NavHostController) {
             }
 
             composable("manual") {
-                TiraReactivaScreen()
+                TiraReactivaScreen(onBackClick = { bottomNavController.popBackStack() })
             }
 
             composable("conditions") {
@@ -351,7 +350,10 @@ fun MainScreenHost(navController: NavHostController) {
             }
 
             composable(NavItem.Perfil.route) {
-                PerfilScreen(navController = navController)
+                PerfilScreen(
+                    navController = navController,
+                    onBackClick = {bottomNavController.popBackStack()}
+                )
             }
         }
     }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,13 +29,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.awaq_agromo.R
 import com.example.awaq_agromo.presentation.component.texts.BodyText
 import com.example.awaq_agromo.presentation.component.texts.SubtitleText
 import com.example.awaq_agromo.presentation.theme.Primary900
 
 @Composable
-fun TiraReactivaScreen() {
+fun TiraReactivaScreen(
+    onBackClick: () -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -48,16 +52,6 @@ fun TiraReactivaScreen() {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Regresar",
-                        tint = Primary900
-                    )
-                }
-
                 Text(
                     text = "Formulario de Monitoreo",
                     style = MaterialTheme.typography.headlineSmall,
@@ -65,7 +59,7 @@ fun TiraReactivaScreen() {
                 )
 
                 IconButton(
-                    onClick = {}
+                    onClick = onBackClick
                 ) {
                     Icon(
                         imageVector = Icons.Default.Clear,
@@ -155,10 +149,4 @@ fun TiraReactivaScreen() {
             }
         }
     }
-}
-
-@Preview(showSystemUi = true)
-@Composable
-fun TiraReactivaScreenPreview() {
-    TiraReactivaScreen()
 }

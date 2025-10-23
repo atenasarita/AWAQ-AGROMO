@@ -318,7 +318,7 @@ private fun StatChip(label: String, value: String) {
 /* --- Ubicación + geocoder + Task.await sin play-services coroutines --- */
 
 @SuppressLint("MissingPermission")
-private suspend fun requestCurrentLocationAndFetch(
+suspend fun requestCurrentLocationAndFetch(
     context: android.content.Context,
     onResolved: (label: String, lat: Double, lon: Double) -> Unit,
     onError: (String) -> Unit
