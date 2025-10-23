@@ -8,15 +8,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.*
-import androidx.compose.material3.CheckboxColors
-import androidx.compose.material3.CheckboxDefaults.colors
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -66,6 +62,8 @@ fun VariedadScreen(
     LaunchedEffect(Unit) {
         userViewModel.fetchCurrentUser()  // ensures user is loaded
     }
+
+    var selectedCrops by remember { mutableStateOf(setOf<String>()) }
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -173,29 +171,36 @@ fun VariedadScreen(
                         modifier = Modifier.weight(1f)
                     )
                     Spacer(Modifier.width(8.dp))
-                    Button(onClick = {
-                        val clean = query.trim()
-                        if (clean.isNotEmpty() && userId != null) {
-                            userViewModel.addCrop(clean)
-                            query = ""
-                        }
-                    },
+                    Button(
+                        onClick = {
+                            val clean = query.trim()
+                            if (clean.isNotEmpty() && userId != null) {
+                                userViewModel.addCrop(clean)
+                                selectedCrops = selectedCrops + clean
+                                query = ""
+                            }
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = accent)
-                    ) { Text("Agregar") }
+                    ) {
+                        Text("Agregar")
+                    }
                 }
             }
 
-            AnimatedVisibility(visible = crops.isNotEmpty()) {
+
+
+            AnimatedVisibility(visible = selectedCrops.isNotEmpty()) {
                 FlowRowChips(
-                    items = crops.toList(),
+                    items = selectedCrops.toList(),
                     accent = accent,
                     textPrimary = textPrimary,
-                    borderSoft = borderSoft,
-                    onRemove = { name -> if (userId != null) userViewModel.removeCrop(name) }
+                    borderSoft = borderSoft
                 )
             }
 
             Spacer(Modifier.height(6.dp))
+
+// 🔹 Box with all crops (userViewModel.crops)
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -206,16 +211,23 @@ fun VariedadScreen(
             ) {
                 LazyColumn(contentPadding = PaddingValues(vertical = 6.dp), modifier = Modifier.fillMaxSize()) {
                     items(filtered, key = { it }) { item ->
+                        val isChecked = selectedCrops.contains(item)
                         CropCheckRow(
                             name = item,
-                            checked = crops.contains(item),
-                            onToggle = { scope.launch { CropLocalStore.toggle(context, item) } },
+                            checked = isChecked,
+                            onToggle = {
+                                val newSet = selectedCrops.toMutableSet().apply {
+                                    if (isChecked) remove(item) else add(item)
+                                }
+                                selectedCrops = newSet
+                            },
                             textPrimary = textPrimary,
                             borderSoft = borderSoft
                         )
                     }
                 }
             }
+
 
             // Fecha de siembra persistente
             Spacer(Modifier.height(12.dp))
@@ -316,14 +328,13 @@ private fun FlowRowChips(
     accent: Color,
     textPrimary: Color,
     borderSoft: Color,
-    onRemove: (String) -> Unit
 ) {
     Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
         val grouped = items.chunked(3)
         grouped.forEach { row ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 row.forEach { name ->
-                    Chip(label = name, accent, textPrimary, borderSoft) { onRemove(name) }
+                    Chip(label = name, textPrimary, borderSoft)
                     Spacer(Modifier.width(8.dp))
                 }
             }
@@ -335,13 +346,12 @@ private fun FlowRowChips(
 @Composable
 private fun Chip(
     label: String,
-    accent: Color,
     textPrimary: Color,
-    borderSoft: Color,
-    onRemove: () -> Unit
+    borderSoft: Color
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
             .background(Color.White)
@@ -350,20 +360,8 @@ private fun Chip(
     ) {
         Text(label, color = textPrimary, style = MaterialTheme.typography.bodyMedium)
         Spacer(Modifier.width(6.dp))
-        Box(
-            modifier = Modifier
-                .size(22.dp)
-                .clip(CircleShape)
-                .background(accent.copy(alpha = 0.12f))
-                .clickable { onRemove() },
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(Icons.Outlined.Close, contentDescription = "Quitar", tint = accent)
-        }
     }
 }
-
-
 
 private fun Long.toDateText(): String {
     val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())

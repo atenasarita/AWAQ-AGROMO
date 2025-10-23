@@ -1,29 +1,42 @@
 package com.example.awaq_agromo.data.local.repository
 
+import com.example.awaq_agromo.data.local.dao.FormDao
+import com.example.awaq_agromo.data.local.entity.FormEntity
 
-import com.example.awaq_agromo.data.local.daos.HumedadDao
-import com.example.awaq_agromo.data.local.db.VariedadDao
-import com.example.awaq_agromo.data.local.entity.HumedadEntity
-import com.example.awaq_agromo.data.local.entity.VariedadEntity
-import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
+class FormRepository(private val dao: FormDao) {
 
-class VariedadRepository @Inject constructor(
-    private val dao: VariedadDao
-) {
-    suspend fun insertForm(form: VariedadEntity) = dao.insertForm(form)
-    fun getForms(userId: Int): Flow<List<VariedadEntity>> = dao.getFormsForUser(userId)
-    suspend fun deleteForms(userId: Int) = dao.deleteFormsForUser(userId)
-}
+    suspend fun upsertPartialForm(
+        id: Int? = null,
+        userId: Int? = null,
+        selectedCrops: String? = null,
+        sowingDate: String? = null,     // keep as String if you want, or convert to Long for Date
+        humedadDesc: String? = null,
+        humedadValue: Int? = null
+    ) {
+        if (id != null) {
+            val current = dao.getFormById(id.toLong())
+            if (current != null) {
+                val updated = current.copy(
+                    userId = userId ?: current.userId,
+                    selectedCrops = selectedCrops ?: current.selectedCrops,
+                    sowingDate = sowingDate ?: current.sowingDate,
+                    humedadDesc = humedadDesc ?: current.humedadDesc,
+                    humedadValue = humedadValue ?: current.humedadValue
+                )
+                dao.update(updated)
+                return
+            }
+        }
 
-class HumedadRepository @Inject constructor(
-    private val dao: HumedadDao
-) {
-    suspend fun saveHumedad(desc: String, value: Int) {
-        dao.insertHumedad(HumedadEntity(humedadDesc = desc, humedadValue = value))
+       val newForm = FormEntity(
+            userId = userId,
+            selectedCrops = selectedCrops,
+            sowingDate = sowingDate,
+            humedadDesc = humedadDesc,
+            humedadValue = humedadValue
+        )
+        dao.insert(newForm)
     }
 
-    fun getLastHumedad(): Flow<HumedadEntity?> = dao.getLastHumedad()
-
-    suspend fun clearHumedad() = dao.clearHumedad()
+    suspend fun getFormById(id: Int): FormEntity? = dao.getFormById(id.toLong())
 }

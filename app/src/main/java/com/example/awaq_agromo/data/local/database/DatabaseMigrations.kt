@@ -2,7 +2,6 @@ package com.example.awaq_agromo.data.local.database
 
 import android.content.Context
 import androidx.room.Room
-import com.example.awaq_agromo.data.local.daos.HumedadDao
 import com.example.awaq_agromo.data.local.db.VariedadDao
 import dagger.Module
 import dagger.Provides
