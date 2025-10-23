@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -13,6 +14,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,12 +37,10 @@ import kotlin.text.toIntOrNull
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HumedadScreen(
-    navController: NavController
+    onNext: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
-    val humedadViewModel: HumedadViewModel = hiltViewModel()
 
     // Colores de la app
     val bgScreen = Color(0xFFF4F8EF)
@@ -195,6 +195,7 @@ fun HumedadScreen(
                         cursorColor = accent
                     ),
                     suffix = { Text("%") },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -202,8 +203,7 @@ fun HumedadScreen(
             // CTA
             Spacer(Modifier.height(18.dp))
             Button(
-                onClick = { humedadViewModel.saveHumedad(selectedDesc, valueInt)
-                    navController.navigate("ph")  },
+                onClick = onNext ,
                 enabled = manualScale.isNotBlank() || (sensorValue.toIntOrNull()?.let { it in 0..100 } == true),
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 10.dp)
@@ -222,4 +222,3 @@ fun HumedadScreen(
 }
 
 /* ---------------- Preview ---------------- */
-

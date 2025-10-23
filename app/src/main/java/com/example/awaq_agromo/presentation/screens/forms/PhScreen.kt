@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material3.*
@@ -17,6 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.awaq_agromo.R
@@ -28,7 +30,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhScreen(
-    onNext: (() -> Unit)? = null
+    onNext: (() -> Unit)? = null,
+    onManualClick: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -122,6 +125,7 @@ fun PhScreen(
                         unfocusedBorderColor = borderSoft,
                         cursorColor = accent
                     ),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -226,7 +230,11 @@ private fun GuideItemWithImage(
                 Spacer(Modifier.height(2.dp))
                 Text(subtitle, style = MaterialTheme.typography.bodySmall, color = Color(0xFF7A8575))
             }
-            Icon(Icons.Outlined.ChevronRight, contentDescription = null, tint = accent)
+            IconButton(
+                onClick = { onClick() }
+            ) {
+                Icon(Icons.Outlined.ChevronRight, contentDescription = null, tint = accent)
+            }
         }
     }
 }

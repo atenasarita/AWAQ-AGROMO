@@ -56,7 +56,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.awaq_agromo.data.local.store.MalezasLocalStore
+import com.example.awaq_agromo.presentation.component.ui.HorizontalDotBar
 import kotlinx.coroutines.launch
 
 @Composable
@@ -116,6 +118,7 @@ fun MalezaScreen(
         ?.collectAsState()
 
     AgromoTheme {
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -129,6 +132,12 @@ fun MalezaScreen(
                     text = "Malezas",
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.padding(bottom = 10.dp)
+                )
+
+                HorizontalDotBar(
+                    n = 13,
+                    k = 13,
+                    modifier = Modifier.padding(16.dp)
                 )
             }
 

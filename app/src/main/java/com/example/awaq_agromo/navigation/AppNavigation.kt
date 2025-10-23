@@ -39,6 +39,7 @@ import com.example.awaq_agromo.presentation.screens.forms.PhScreen
 import com.example.awaq_agromo.presentation.screens.forms.PlagueScreen
 import com.example.awaq_agromo.presentation.screens.forms.SicknessScreen
 import com.example.awaq_agromo.presentation.screens.forms.StatesScreen
+import com.example.awaq_agromo.presentation.screens.forms.TiraReactivaScreen
 import com.example.awaq_agromo.presentation.screens.forms.VariedadScreen
 import com.example.awaq_agromo.presentation.screens.login.LoginScreen
 import com.example.awaq_agromo.presentation.screens.onboarding.Onboarding_Page_1Screen
@@ -128,8 +129,6 @@ fun AppNavigation(
                 else null
             )
         }
-
-
 
         composable("main_host") {
             MainScreenHost(navController = navController)
@@ -231,7 +230,6 @@ fun MainScreenHost(navController: NavHostController) {
                     navController = bottomNavController,
                     onPhotoClick = { navController.navigate("photo_screen") },
                     userViewModel = viewModel
-
                 )
             }
 
@@ -262,17 +260,21 @@ fun MainScreenHost(navController: NavHostController) {
 
 
             composable("humedad") { backStackEntry ->
-                HumedadScreen(navController = navController)
+                HumedadScreen(
+                    onNext = { bottomNavController.navigate("ph")}
+                )
             }
 
             composable("ph"){
                 PhScreen(
-                    onNext = {
-                        bottomNavController.navigate("conditions")
-                    }
+                    onNext = { bottomNavController.navigate("conditions") },
+                    onManualClick = { bottomNavController.navigate("manual") }
                 )
             }
 
+            composable("manual") {
+                TiraReactivaScreen()
+            }
 
             composable("conditions") {
                 var selectedOption by remember { mutableStateOf("") }
@@ -280,7 +282,7 @@ fun MainScreenHost(navController: NavHostController) {
                 ConditionsScreen(
                     selectedOption = selectedOption,
                     onOptionSelected = { selectedOption = it },
-                    onOnboardingClick = {
+                    onNext = {
                         bottomNavController.navigate("desarrollo")
                     }
                 )

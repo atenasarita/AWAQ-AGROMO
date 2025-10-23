@@ -97,7 +97,7 @@ fun DashboardScreen(
             item { MonitoreoCard(navController = navController) }
             item { MisCultivos(crops.toList()) }
             item { QuickInputSection(userViewModel = userViewModel) }
-            item { CropPhotosSection() }
+            item { CropPhotosSection(onPhotoClick) }
 
 
             item {

@@ -49,7 +49,7 @@ import kotlin.collections.forEach
 fun ConditionsScreen(
     selectedOption: String,
     onOptionSelected: (String) -> Unit,
-    onOnboardingClick: () -> Unit = {}
+    onNext: () -> Unit = {}
 ) {
     var selectedOption by remember { mutableStateOf("Nivel de fertilidad") }
     var expanded by remember { mutableStateOf(false) }
@@ -257,8 +257,7 @@ fun ConditionsScreen(
             // ---- BOTÓN SIGUIENTE ----
             AgromoPrimaryButton(
                 text = "Siguiente",
-                onClick = {
-                }
+                onClick = onNext
             )
 
             Spacer(modifier = Modifier.height(40.dp))

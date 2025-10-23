@@ -1,6 +1,5 @@
 package com.example.awaq_agromo.data.local.database
 
-
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.awaq_agromo.data.local.db.VariedadDao
